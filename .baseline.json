@@ -1,0 +1,30 @@
+{
+    "schemaVersion":  1,
+    "baselineVersion":  "0.1.1",
+    "mode":  "local",
+    "installedAt":  "2026-10-27T11:40:00.2955362-03:00",
+    "skills":  [
+                   "angular"
+               ],
+    "targets":  [
+                    "none"
+                ],
+    "targetFileCreated":  false,
+    "targetPermissionsAdded":  false,
+    "targetFiles":  [
+
+                    ],
+    "files":  {
+                  ".baseline/AGENTS.md":  "601ED56CC2664956DEBB5EC2EE7EA1BE2141AA365B2805AEBFDE8E07CC9D16A2",
+                  ".baseline/session.md":  "4D3C2F6F652C3CB880A5204CC5434CB32B40E873AEF9A11C18EFEF094940F484",
+                  ".baseline/skills/angular/references/auth.md":  "E55E28AD465B3F0A58620AF05B5254289603F91A1C0B742D66957599E48563A6",
+                  ".baseline/skills/angular/references/componentes-select.md":  "15D3BA03916B371D71859EF690057E66902420AC8CF6988949058EC164CA4F07",
+                  ".baseline/skills/angular/references/crud-page.md":  "7B5F68803B1C18253D9E39442B4E919455AF86486AC73B0B38E1080571520006",
+                  ".baseline/skills/angular/references/ejemplo-referencia.md":  "4E900A5C7C0A700FA96D356B89FF56EBF5C69F4E67D3120254CAB398365BFC94",
+                  ".baseline/skills/angular/references/feedback.md":  "6EFA6A2C2151C6C4E2429A60B8EB4D6BC1D46C35A1BF03010CEFD41C6710973D",
+                  ".baseline/skills/angular/references/filtro-catalogo.md":  "8255A1E249002334E5D22152F5D5F89984D7DFB360BF0939EF2D9CA04135A528",
+                  ".baseline/skills/angular/references/ssr.md":  "00157A2BD001A19B28F84FE815C2F936FF04FDF3EF889F34CD81F1E80D7C1CFD",
+                  ".baseline/skills/angular/SKILL.md":  "A30116A1AEBD7CF9D18704ED346241C2BE0910F1437E8BC876D251402DD469CE",
+                  ".baseline/VERSION":  "80447316529FC62014FBAA047FB67C51AC30E32830CDA370405349D8D66D196C"
+              }
+}

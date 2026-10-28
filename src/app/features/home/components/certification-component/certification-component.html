@@ -1,0 +1,20 @@
+<section class="flex flex-wrap gap-4 justify-center p-4">
+  @for (item of certifications; track item.id) {
+    <a class="card bg-base-100 w-48 shadow-xl hover:scale-105 transition-transform duration-300" 
+      target='_blank' 
+      [href]="item.url">
+      
+      <figure class="p-4">
+        <img
+          class="rounded-xl" 
+          [ngSrc]="item.img"
+          [alt]="item.alt"
+          height="200"
+          width="200" />
+      </figure>
+      <div class="card-body items-center text-center">
+        <h2 class="card-title">{{ item.title }}</h2>
+      </div>
+    </a>
+  }
+</section>

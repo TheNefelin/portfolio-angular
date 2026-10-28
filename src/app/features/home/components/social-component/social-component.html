@@ -1,0 +1,16 @@
+<section class="bg-base-300 flex justify-around mt-4">
+  @for (item of socials; track item.id) {
+    <a class="w-full flex justify-center" 
+      [class]="item.color"
+      [href]="item.url" 
+      target='_blank'>
+      
+      <img 
+        class="w-10 h-10 border-4 rounded-full border-white m-2 bg-white hover:scale-105 transition-transform duration-300" 
+        [ngSrc]="item.img"
+        [alt]="item.alt"
+        height="40"
+        width="40">
+    </a>
+  }
+</section>
