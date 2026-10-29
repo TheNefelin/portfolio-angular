@@ -1,13 +1,13 @@
 import { Routes } from '@angular/router';
-import { HomeLayoutComponent } from './layouts/home-layout-component/home-layout-component';
+import { MainLayoutComponent } from './layouts/main-layout-component/main-layout-component';
 import { NotFoundPage } from './shared/pages/not-found-page/not-found-page';
-import { UserLayoutComponent } from './layouts/user-layout-component/user-layout-component';
+import { AdminLayoutComponent } from './layouts/admin-layout-component/admin-layout-component';
 import { ForbiddenPage } from '@shared/pages/forbidden-page/forbidden-page';
 
 export const routes: Routes = [
 	{
 		path: '',
-		component: HomeLayoutComponent,
+		component: MainLayoutComponent,
 		children: [
 			{
 				path: '',
@@ -21,7 +21,7 @@ export const routes: Routes = [
 	},
 	{
 		path: 'admin',
-		component: UserLayoutComponent,
+		component: AdminLayoutComponent,
 		children: [
 			{
 				path: '',

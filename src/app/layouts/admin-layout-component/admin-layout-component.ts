@@ -12,10 +12,10 @@ import { AuthGoogleComponent } from '@features/auth/components/auth-google-compo
 
 @Component({
   imports: [FooterComponent, RouterOutlet, RouterLink, ButtonBackToTopComponent, AuthGoogleComponent],
-  selector: 'app-user-layout-component',
-  templateUrl: './user-layout-component.html',
+  selector: 'app-admin-layout-component',
+  templateUrl: './admin-layout-component.html',
 })
-export class UserLayoutComponent {
+export class AdminLayoutComponent {
   protected readonly navigateMenuItem = NAVIGATE_MENU_ITEM
 
   private readonly urlGrpService = inject(UrlGrpService);

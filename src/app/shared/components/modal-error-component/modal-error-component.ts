@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ErrorService } from '@core/services/error-service';
 
 @Component({

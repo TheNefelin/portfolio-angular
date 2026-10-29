@@ -10,10 +10,10 @@ import { ButtonBackToTopComponent } from '@shared/components/button-back-to-top-
 
 @Component({
   imports: [NavbarComponent, RouterOutlet, FooterComponent, ButtonBackToTopComponent],
-  selector: 'app-home-layout-component',
-  templateUrl: './home-layout-component.html',
+  selector: 'app-main-layout-component',
+  templateUrl: './main-layout-component.html',
 })
-export class HomeLayoutComponent {
+export class MainLayoutComponent {
   private readonly urlGrpService = inject(UrlGrpService);
   protected readonly computedUrlGrpDetailList = computed<UrlGrpDetailModel[]>(() => this.getAllDetailRX.value() ?? []);
 

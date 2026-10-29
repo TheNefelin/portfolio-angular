@@ -25,8 +25,8 @@
 ## Cómo funciona
 
 - Angular 22 standalone con SSR, Tailwind 4 + DaisyUI 5 y rutas lazy por feature.
-- `/` monta `HomeLayoutComponent` (HOME y auth); `/admin` monta `UserLayoutComponent` con dashboard y un listado por entidad; `**` va a 404.
-- El HOME pide proyectos y el footer se arma con `urlGrpDetail` desde `HomeLayoutComponent`.
+- `/` monta `MainLayoutComponent` (HOME y auth); `/admin` monta `AdminLayoutComponent` con dashboard y un listado por entidad; `**` va a 404.
+- El HOME pide proyectos y el footer se arma con `urlGrpDetail` desde `MainLayoutComponent`.
 - `ApiService` llama a `/ssr-api/{ruta}` sin credenciales. `src/server.ts` agrega `X-API-Key` y reenvía status y JSON.
 - `errorInterceptor` normaliza el `detail` de FastAPI y lo publica en `ErrorService`.
 - Los alias `@core/*`, `@features/*`, `@layouts/*` y `@shared/*` se definen en `tsconfig.json` para app y tests.
@@ -40,12 +40,11 @@
 | Aceptado | BFF `/ssr-api/{ruta}` sin namespace. | Una sola API; la key no entra al bundle. |
 | Aceptado | Entorno con `process.loadEnvFile()`; el entorno del proceso manda. | Sin dependencias extra. |
 | Aceptado | `allowedHosts` explícito con `NG_ALLOWED_HOSTS`. | Angular rechaza hosts no declarados y `angular.json` lo trae vacío. |
-| Pendiente | Render de `/` y `/admin/**` como Server/Client. | El prerender deja vacías las listas que vienen de la API. |
+| Aceptado | Render por ruta: `/` en Server, `/admin/**` en Client, resto prerender. | HOME necesita SEO y datos por request; el admin es privado. |
 | Pendiente | Login y protección de `/admin`. | Hay auth con Google, falta el guard. |
 
 ## Pendientes
 
-- Cambiar `app.routes.server.ts`: `/` y `/admin/**` fuera del prerender.
 - Definir `NG_ALLOWED_HOSTS` con el dominio real al desplegar.
 - Confirmar el guard de `/admin` y el flujo de Google.
 - Completar el CRUD de language, technology y project (hoy listan y modelan).

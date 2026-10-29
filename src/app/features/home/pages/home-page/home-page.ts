@@ -6,7 +6,6 @@ import { CertificationComponent } from '@features/home/components/certification-
 import { ConsoleComponent } from '@features/home/components/console-component/console-component';
 import { CodeComponent } from '@features/home/components/code-component/code-component';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { CrudPage } from '@shared/base/crud-page';
 import { ProjectModel } from '@features/project/models/project-model';
 import { catchError, map, of } from 'rxjs';
 import { ProjectService } from '@features/project/services/project-service';
