@@ -1,0 +1,19 @@
+@if (confirmService.dialog(); as dialog) {
+  <dialog class="modal modal-open modal-bottom sm:modal-middle" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="modal-box">
+      <h3 id="confirm-title" class="text-lg font-bold text-error">{{ dialog.title }}</h3>
+      <p class="py-4 text-secondary">{{ dialog.message }}</p>
+      <div class="modal-action flex items-center gap-2">
+        <app-button-component
+          [icon]="'save'"
+          [textBtn]="'Confirmar'"
+          (clicked)="confirmService.accept()" />
+
+        <app-button-component
+          [icon]="'cancel'"
+          [textBtn]="'Cancelar'"
+          (clicked)="confirmService.reject()" />
+      </div>
+    </div>
+  </dialog>
+}

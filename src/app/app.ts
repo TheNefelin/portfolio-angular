@@ -1,9 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ModalConfirmComponent } from '@shared/components/modal-confirm-component/modal-confirm-component';
 import { ModalErrorComponent } from '@shared/components/modal-error-component/modal-error-component';
 
 @Component({
-  imports: [RouterOutlet, ModalErrorComponent],
+  imports: [RouterOutlet, ModalErrorComponent, ModalConfirmComponent],
   selector: 'app-root',
   templateUrl: './app.html',
 })
