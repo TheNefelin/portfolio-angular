@@ -10,19 +10,79 @@ import { join } from 'node:path';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+const angularApp = new AngularNodeAppEngine({
+  // Angular rechaza los Host que no estén en esta lista (protección SSRF).
+  // En producción, definir NG_ALLOWED_HOSTS con el dominio real.
+  allowedHosts: (process.env['NG_ALLOWED_HOSTS'] ?? 'localhost,127.0.0.1')
+    .split(',')
+    .map((host) => host.trim())
+    .filter((host) => host.length > 0),
+});
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+// Carga .env si existe. Las variables ya definidas en el entorno tienen prioridad.
+try {
+  process.loadEnvFile();
+} catch {
+  // Sin archivo .env: se usan las variables del proceso.
+}
+
+const API_URL = (process.env['API_URL'] ?? '').replace(/\/+$/, '');
+const API_KEY = process.env['API_KEY'] ?? '';
+
+const PROXY_PREFIX = '/ssr-api';
+const PROXY_TIMEOUT_MS = 15_000;
+const PROXY_METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
+
+function parseJsonSafe(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { detail: text };
+  }
+}
+
+app.use(express.json());
+
+// BFF: el navegador llama a /ssr-api/{ruta} y el servidor agrega la API key.
+// La key nunca sale del proceso del servidor.
+app.use(PROXY_PREFIX, async (req, res) => {
+  if (!PROXY_METHODS.has(req.method)) {
+    res.status(405).json({ detail: `Método no permitido: ${req.method}` });
+    return;
+  }
+
+  if (!API_URL || !API_KEY) {
+    res.status(500).json({ detail: 'Falta configurar API_URL y API_KEY en el servidor.' });
+    return;
+  }
+
+  const sendsBody = req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH';
+
+  try {
+    const response = await fetch(`${API_URL}${req.url}`, {
+      method: req.method,
+      headers: {
+        'X-API-Key': API_KEY,
+        Accept: 'application/json',
+        ...(sendsBody ? { 'Content-Type': 'application/json' } : {}),
+      },
+      body: sendsBody ? JSON.stringify(req.body ?? {}) : undefined,
+      signal: AbortSignal.timeout(PROXY_TIMEOUT_MS),
+    });
+
+    const text = await response.text();
+
+    if (!text) {
+      res.status(response.status).end();
+      return;
+    }
+
+    res.status(response.status).json(parseJsonSafe(text));
+  } catch (err) {
+    console.error('[server.ts] proxy error:', err);
+    res.status(502).json({ detail: 'Error de conexión con la API.' });
+  }
+});
 
 /**
  * Serve static files from /browser

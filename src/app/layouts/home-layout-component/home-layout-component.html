@@ -1,9 +1,13 @@
 <section class="grid min-h-dvh grid-rows-[auto_1fr_auto]">
-  <app-navbar-component/>
+  <section class="sticky top-0 z-10">
+    <app-navbar-component/>
+  </section>
 
-  <div>
+  <div class="pt-4">
     <router-outlet/>
   </div>
   
-  <app-footer-component/>
+  <app-footer-component [urlGrpDetailList]="computedUrlGrpDetailList()" />
 </section>
+
+<app-button-back-to-top-component/>

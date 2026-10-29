@@ -7,5 +7,5 @@ import { UrlGrpDetailModel } from '../../../features/url-grp/models/url-grp-mode
   templateUrl: './footer-component.html',
 })
 export class FooterComponent {
-  protected readonly urlGrpDetailList = input<UrlGrpDetailModel[]>([]); 
+  readonly urlGrpDetailList = input<UrlGrpDetailModel[]>([]); 
 }

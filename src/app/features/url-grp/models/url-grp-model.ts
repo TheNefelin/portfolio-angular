@@ -1,4 +1,4 @@
-import { UrlModel } from "../../url/models/url-model";
+import { UrlModel } from "@features/url/models/url-model";
 
 export interface SaveUrlGrpModel {
   name: string;
@@ -12,5 +12,5 @@ export interface UrlGrpModel extends SaveUrlGrpModel {
 }
 
 export interface UrlGrpDetailModel extends UrlGrpModel {
-  Urls: UrlModel[];
+  urls: UrlModel[];
 }

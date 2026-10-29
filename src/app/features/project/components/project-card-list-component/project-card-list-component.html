@@ -1,0 +1,77 @@
+<section class="p-4">
+  <div class="flex flex-wrap gap-8 justify-center">
+
+    @for (project of projectList(); track project.id_project) {
+      <div class="card w-72 bg-base-100 shadow-xl hover:scale-105 transition-transform duration-300">
+        <div class="card-body">
+          <h2 class="card-normal font-bold">{{ project.name }}</h2>
+        </div>
+
+        <figure class="px-4">
+          <img class="rounded-xl shadow-2xl aspect-video" 
+            [ngSrc]="project.img_url ?? 'images/project_placeholder.webp'" 
+            [alt]="project.name" 
+            width="256"
+            height="144" />
+        </figure>
+
+        <div class="card-body m-auto">
+          <h2 class="card-title">
+            @for (language of project.languages; track language.id_language) {
+              <div class="avatar m-auto">
+                <div class="h-10">
+                  <img 
+                    [ngSrc]="language.img_url ?? 'images/placeholder.webp'" 
+                    [alt]="language.name"
+                    height="40"
+                    width="40" />
+                </div>
+              </div>
+            }
+          </h2>
+
+          <h2 class="card-title m-auto">
+            @for (technology of project.technologies; track technology.id_technology) {
+              <div class="avatar m-auto">
+                <div class="h-10">
+                  <img 
+                    [ngSrc]="technology.img_url ?? 'images/placeholder.webp'" 
+                    [alt]="technology.name"
+                    height="40"
+                    width="40" />
+                </div>
+              </div>
+            }
+          </h2>
+        </div>
+
+        <div class="card-actions justify-center mb-2 text-gray-400">
+          @if (!project.repo_url && !project.app_url) {
+            <p>without reference</p>
+          } @else {
+            <a class="avatar flex items-center gap-2 hover:text-red-400 transition timeline-300" target="_blank"
+              [href]="project.repo_url" >
+              
+              <div class="w-4">
+                <img 
+                  ngSrc="images/hero_github.png" alt="GitHub image" width="40" height="40" />
+              </div>
+              <span>GitHub</span>
+            </a>  
+
+            <a class="avatar flex items-center gap-2 hover:text-red-400 transition timeline-300" target="_blank"
+              [href]="project.repo_url" >
+              
+              <div class="w-4">
+                <img 
+                  ngSrc="images/card_app.png" alt="App image" width="40" height="40" />
+              </div>
+              <span>App</span>
+            </a> 
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+</section>

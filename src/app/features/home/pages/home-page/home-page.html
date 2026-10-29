@@ -1,18 +1,19 @@
 
-<section class="pt-20">
+<section>
   <app-hero-component/>
 </section>
 
-<app-title-component title="aboutMe"/>
+<app-title-component id="id_me" title="aboutMe"/>
 <app-console-component/>
 
-<app-title-component title="someExperience"/>
+<app-title-component id="id_Experience" title="someExperience"/>
 <app-code-component/>
 
-<app-title-component title="someProjects"/>
+<app-title-component id="id_projects" title="someProjects"/>
+<app-project-card-list-component [projectList]="computedProjectList()"/>
 
-<app-title-component title="someCertifications"/>
+<app-title-component id="id_certifications" title="someCertifications"/>
 <app-certification-component/>
 
-<app-title-component title="someSocials"/>
+<app-title-component id="id_socials" title="someSocials"/>
 <app-social-component/>

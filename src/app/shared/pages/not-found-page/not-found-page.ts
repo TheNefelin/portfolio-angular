@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { ButtonComponent } from '../../components/button-component/button-component';
+import { ButtonComponent } from '@shared/components/button-component/button-component';
 
 @Component({
   imports: [ButtonComponent],

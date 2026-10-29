@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { HomeLayoutComponent } from './layouts/home-layout-component/home-layout-component';
-import { HomePage } from './features/home/pages/home-page/home-page';
 import { NotFoundPage } from './shared/pages/not-found-page/not-found-page';
 import { UserLayoutComponent } from './layouts/user-layout-component/user-layout-component';
+import { ForbiddenPage } from '@shared/pages/forbidden-page/forbidden-page';
 
 export const routes: Routes = [
 	{
@@ -11,16 +11,50 @@ export const routes: Routes = [
 		children: [
 			{
 				path: '',
-				component: HomePage,
+				loadChildren: () => import('@features/home/home.routes').then(m => m.routes),
 			},
+			{
+				path: 'auth',
+				loadChildren: () => import('@features/auth/auth.routes').then(m => m.routes),
+			}
 		],
 	},
 	{
 		path: 'admin',
 		component: UserLayoutComponent,
+		children: [
+			{
+				path: '',
+				loadChildren: () => import('@features/dashboard/dashboard.routes').then(m => m.routes),
+			},
+			{
+				path: 'url-grp',
+				loadChildren: () => import('@features/url-grp/url-grp.routes').then(m => m.routes),
+			},
+			{
+				path: 'url',
+				loadChildren: () => import('@features/url/url.routes').then(m => m.routes),
+			},
+			{
+				path: 'language',
+				loadChildren: () => import('@features/language/language.routes').then(m => m.routes),
+			},
+			{
+				path: 'technology',
+				loadChildren: () => import('@features/technology/technology.routes').then(m => m.routes),
+			},
+			{
+				path: 'project',
+				loadChildren: () => import('@features/project/project.routes').then(m => m.routes),
+			},
+		],
+	},
+	{
+		path: 'forbidden',
+		component: ForbiddenPage,
 	},
 	{
 		path: '**',
-		component: NotFoundPage
+		component: NotFoundPage,
 	}
 ];
