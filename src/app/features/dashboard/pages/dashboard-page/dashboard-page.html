@@ -1,1 +1,17 @@
-<p>dashboard-page works!</p>
+<section class="grid gap-4">
+  <span class="font-bold text-2xl italic px-2">DASHBOARD</span>
+  <p class="px-2 text-base-content/70">Elige una sección para administrar su contenido.</p>
+
+  <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    @for (item of sections; track item.navigateTo) {
+      <a
+        class="card bg-base-200 hover:bg-base-300 transition-colors"
+        [routerLink]="item.navigateTo">
+        <div class="card-body">
+          <h2 class="card-title">{{ item.label }}</h2>
+          <span class="text-sm text-base-content/70">Administrar</span>
+        </div>
+      </a>
+    }
+  </div>
+</section>

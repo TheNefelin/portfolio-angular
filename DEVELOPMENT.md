@@ -10,26 +10,28 @@
 | Bootstrap y providers | `src/main.ts`, `src/app/app.config.ts` | al agregar providers |
 | Rutas | `src/app/app.routes.ts`, `src/app/features/*/*.routes.ts` | al agregar páginas |
 | Render por ruta | `src/app/app.routes.server.ts` | al cambiar prerender/SSR |
-| Layouts | `src/app/layouts/` | al cambiar el shell público o admin |
+| Layouts | `src/app/layouts/` (`main-layout` público, `admin-layout` privado) | al cambiar el shell |
 | HOME | `src/app/features/home/` | al ajustar secciones del inicio |
 | Admin y CRUD | `src/app/features/{dashboard,url-grp,url,language,technology,project}/` | al tocar listados o formularios |
-| Auth | `src/app/features/auth/` | al tocar el login con Google |
+| Auth | `src/app/core/services/auth-service.ts`, `src/app/core/interceptors/auth-interceptor.ts`, `src/app/features/auth/` | al cablear el login |
 | Cliente de API | `src/app/core/services/api-service.ts` | al cambiar rutas o métodos |
-| BFF | `src/server.ts` | al tocar `/ssr-api` o variables de entorno |
-| Errores y feedback | `src/app/core/interceptors/`, `src/app/core/services/*-service.ts` | al cambiar toasts, errores o confirmaciones |
+| BFF | `src/server.ts` | al tocar `/ssr-api`, multipart o variables de entorno |
+| Feedback | `src/app/core/services/{error,toast,confirm,mutation}-service.ts`, `src/app/shared/components/{modal-error,modal-confirm,toast}-component/` | al cambiar mensajes o modales |
 | Base de listados | `src/app/shared/base/crud-page.ts` | al cambiar paginación o filtro |
 | Navegación | `src/app/shared/constants/routes-constant.ts` | al agregar rutas o ítems del menú |
 | Compartidos | `src/app/shared/components/` | al reutilizar UI |
-| Config y alias | `angular.json`, `tsconfig.json`, `.env.demo` | al cambiar build, paths o entorno |
+| Config | `angular.json`, `tsconfig.json`, `eslint.config.js`, `.env.demo` | al cambiar build, paths, lint o entorno |
 
 ## Cómo funciona
 
 - Angular 22 standalone con SSR, Tailwind 4 + DaisyUI 5 y rutas lazy por feature.
-- `/` monta `MainLayoutComponent` (HOME y auth); `/admin` monta `AdminLayoutComponent` con dashboard y un listado por entidad; `**` va a 404.
-- El HOME pide proyectos y el footer se arma con `urlGrpDetail` desde `MainLayoutComponent`.
+- `/` monta `MainLayoutComponent` (HOME y auth); `/admin` monta `AdminLayoutComponent` (dashboard y CRUD); `/privacy-policy/navaja-suiza` es pública.
+- Render: `/` en Server, `/admin/**` en Client, resto prerender. En Server, `/ssr-api` relativo resuelve contra el request; en prerender no hay origen y las listas quedan vacías.
 - `ApiService` llama a `/ssr-api/{ruta}` sin credenciales. `src/server.ts` agrega `X-API-Key` y reenvía status y JSON.
-- `errorInterceptor` normaliza el `detail` de FastAPI y lo publica en `ErrorService`.
-- Los alias `@core/*`, `@features/*`, `@layouts/*` y `@shared/*` se definen en `tsconfig.json` para app y tests.
+- Feedback: `errorInterceptor` → `ErrorService` → `modal-error`; `ConfirmService` (promesa) → `modal-confirm`; `MutationService` → `ToastService` → `toast`. Los tres componentes se montan una vez en `app.html`.
+- CRUD: `url-grp`, `url`, `language` y `technology` usan modal; `project` usa las páginas `/admin/project/form` y `/admin/project/form/:id`.
+- Auth: `AuthService` (Google y refresh, persiste en `sessionStorage`) y `authInterceptor` existen pero **no están registrados**; `/admin` sigue sin guard.
+- Alias `@core/*`, `@features/*`, `@layouts/*` y `@shared/*` en `tsconfig.json`; ESLint con `angular-eslint` vía `pnpm lint`.
 
 ## Decisiones
 
@@ -40,25 +42,33 @@
 | Aceptado | BFF `/ssr-api/{ruta}` sin namespace. | Una sola API; la key no entra al bundle. |
 | Aceptado | Entorno con `process.loadEnvFile()`; el entorno del proceso manda. | Sin dependencias extra. |
 | Aceptado | `allowedHosts` explícito con `NG_ALLOWED_HOSTS`. | Angular rechaza hosts no declarados y `angular.json` lo trae vacío. |
-| Aceptado | Render por ruta: `/` en Server, `/admin/**` en Client, resto prerender. | HOME necesita SEO y datos por request; el admin es privado. |
-| Pendiente | Login y protección de `/admin`. | Hay auth con Google, falta el guard. |
+| Aceptado | Render por ruta: `/` Server, `/admin/**` Client, resto prerender. | SEO y datos por request en HOME; el admin es privado. |
+| Aceptado | Feedback con componentes montados una vez en `app.html`. | Sin consumidor, `confirm()` nunca resuelve y el borrado cuelga. |
+| Aceptado | ESLint con `angular-eslint` y reglas de accesibilidad de templates. | Verificación automática, no solo revisión visual. |
+| Aceptado | `project` con página de formulario; el resto en modal. | Tiene selects y subida de imagen. |
+| Aceptado | Mantener las dos URLs de privacy policy: `/privacy-policy/navaja-suiza` y `/navaja-suiza/privacy-policy`. | Ambas están publicadas y hay enlaces externos a las dos. |
+| Pendiente | Auth sin namespace: el BFF ignora `{ns}`. | Hoy `/ssr-api/{ns}/auth/*` no llega a la API. |
+| Pendiente | Sesión en `sessionStorage` vs cookie `httpOnly`. | Cualquier XSS lee los tokens. |
 
 ## Pendientes
 
-- Definir `NG_ALLOWED_HOSTS` con el dominio real al desplegar.
-- Confirmar el guard de `/admin` y el flujo de Google.
-- Completar el CRUD de language, technology y project (hoy listan y modelan).
-- Implementar subidas multipart en el BFF (`/{id}/upload-image`).
-- Corregir el `id` de `TitleComponent`: las anclas del navbar no apuntan a nada.
-- `ROUTES_CONSTANTS.NOT_FOUND` apunta a `/not-found`, que no existe; hay un typo `LAMGUAGE`.
-- `FooterComponent` importa un modelo desde una feature: dependencia invertida.
+- Implementar multipart en el BFF: `image-picker` y `uploadImage` de project, language y technology hoy mandan `{}`.
+- Cablear auth: registrar `authInterceptor` con regex sin namespace, `/ssr-api/config` que exponga `GOOGLE_CLIENT_ID`, guard de `/admin` y montar el router de auth en `portfolio-python` (hoy no está incluido en `main.py`).
+- Corregir el `id` de `TitleComponent`: usa `id={id}`, las anclas del navbar no apuntan a nada.
+- `FooterComponent` importa un modelo desde `url-grp`: dependencia invertida.
 - `ConsoleComponent` deja `setTimeout` sin limpieza y un `#scrollAnchor` sin uso.
 - El navbar usa `href` en algunos enlaces; puede recargar y perder estado del router.
-- Decidir si el BFF debe propagar `Authorization` (hoy no lo hace).
+- Restaurar `NG_ALLOWED_HOSTS` en `.env.demo` y definirlo con el dominio real al desplegar.
 - Quitar el bloque comentado de `error-interceptor`.
-- Agregar lint.
 
 ## Seguridad
 
 - `.env` está en `.gitignore` y nunca se versionó; `.env.demo` es la plantilla.
 - La API key solo existe en el proceso del servidor, nunca en el bundle del navegador.
+- Los tokens de auth viven en `sessionStorage`: cualquier XSS los lee. La alternativa es cookie `httpOnly` emitida por el BFF.
+
+## Estado
+
+- `pnpm build` OK, 6 rutas prerenderizadas.
+- `pnpm test --watch=false`: 48 archivos, 53/53.
+- `pnpm lint`: limpio.

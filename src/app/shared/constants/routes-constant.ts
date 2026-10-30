@@ -8,7 +8,7 @@ export const ROUTES_CONSTANTS = {
     DASHBOARD: '/admin',
     URL_GRP: '/admin/url-grp',
     URL: '/admin/url',
-    LAMGUAGE: '/admin/language',
+    LANGUAGE: '/admin/language',
     TECHNOLOGY: '/admin/technology',
     PROJECT: {
       ROOT: '/admin/project',
@@ -24,7 +24,7 @@ export const NAVIGATE_MENU_ITEM: NavigateModel[] = [
   { label: 'Dashboard', icon: 'dashboard', navigateTo: ROUTES_CONSTANTS.ADMIN.DASHBOARD },
   { label: 'Url Grp', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.URL_GRP },
   { label: 'Url', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.URL },
-  { label: 'Language', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.LAMGUAGE },
+  { label: 'Language', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.LANGUAGE },
   { label: 'Technology', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.TECHNOLOGY },
   { label: 'Project', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.PROJECT.ROOT },
 ]

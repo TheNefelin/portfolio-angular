@@ -145,7 +145,7 @@ export class ProjectFormPage {
       next: (result) => {
         this.toastService.show('Guardado correctamente');
         if (!id && result) {
-          this.router.navigate([ROUTES_CONSTANTS.ADMIN.PROJECT.FORM, result.id_project]);
+          this.router.navigate([ROUTES_CONSTANTS.ADMIN.PROJECT.ROOT]);
         }
       },
       error: (err) => {
