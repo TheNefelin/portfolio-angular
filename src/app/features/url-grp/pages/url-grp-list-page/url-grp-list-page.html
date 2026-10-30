@@ -13,7 +13,7 @@
     (prevPage)="prevPage()"
     (nextPage)="nextPage()"/>
 
-  @if (getAllPaginationRX.isLoading() && !getAllPaginationRX.hasValue()) {
+  @if (getAllUrlGrpPaginationRX.isLoading()) {
     <div class="p-4 flex justify-center items-center">
       <app-loading-component/>
     </div>

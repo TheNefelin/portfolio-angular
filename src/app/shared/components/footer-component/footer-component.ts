@@ -8,4 +8,5 @@ import { UrlGrpDetailModel } from '../../../features/url-grp/models/url-grp-mode
 })
 export class FooterComponent {
   readonly urlGrpDetailList = input<UrlGrpDetailModel[]>([]); 
+  protected readonly getYear = new Date().getFullYear();
 }

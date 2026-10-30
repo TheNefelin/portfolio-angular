@@ -1,0 +1,33 @@
+<section class="grid gap-2">
+  <span class="font-bold text-2xl italic px-2">
+    @if (isLoading()) {
+      <app-loading-component/>
+    } @else {
+      {{ isEditMode() ? 'MODIFICAR' : 'CREAR' }}
+    }
+    PROYECTO
+  </span>
+
+  <div class="fieldset bg-base-200 border-base-300 rounded-box border p-5 flex justify-end w-full">
+    <app-button-component
+      [icon]="'goto'"
+      [textBtn]="'Volver'"
+      (clicked)="goToProject()"/>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center p-4">
+      <app-loading-component/>
+    </div>
+  } @else {
+    <app-project-form-component
+      [isLoading]="isLoading()"
+      [isSaving]="project.isSaving()"
+      [isEditMode]="isEditMode()"
+      [computedProject]="computedProject()"
+      [computedLanguageList]="computedLanguageList()"
+      [computedTechnologyList]="computedTechnologyList()"
+      (deleteImage)="onDeleteImage()"
+      (submitted)="onSubmit($event)" />
+  }
+</section>

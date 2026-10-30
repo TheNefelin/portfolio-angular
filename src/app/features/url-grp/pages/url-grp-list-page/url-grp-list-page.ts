@@ -19,18 +19,22 @@ import { UrlGrpFormComponent } from '@features/url-grp/components/url-grp-form-c
   templateUrl: './url-grp-list-page.html',
 })
 export class UrlGrpListPage extends CrudPage<UrlGrpModel> {
+  // SERVICES ---------------------------------------------------------------
   private readonly confirmService = inject(ConfirmService);
   private readonly mutation = inject(MutationService);
+
+  // STATES -----------------------------------------------------------------
   protected readonly showFormModal = signal<boolean>(false);
-  
+
+  // FETCH-SERVICES-STATES --------------------------------------------------
   private readonly urlGrpService = inject(UrlGrpService);
-  protected readonly computedUrlGrpPaginatedList = computed<UrlGrpModel[]>(() => this.getAllPaginationRX.value() ?? []);
+  protected readonly computedUrlGrpPaginatedList = computed<UrlGrpModel[]>(() => this.getAllUrlGrpPaginationRX.value() ?? []);
   protected readonly urlGrp = {
     savePayload: signal<UrlGrpModel | null>(null),
     isSaving: signal<boolean>(false),
   };
 
-  protected readonly getAllPaginationRX = rxResource({
+  protected readonly getAllUrlGrpPaginationRX = rxResource({
     params: () => this.getAllPayload(),
     stream: ({ params }) => {
       if (!params) return of(null);
@@ -38,7 +42,7 @@ export class UrlGrpListPage extends CrudPage<UrlGrpModel> {
       return this.urlGrpService.getAllPagination(params).pipe(
         map(response => this.mapPaginated(response)),
         catchError(err => {
-          console.error('[UrlGrpService::UrlGrpPage] getAllPagination:', err);
+          console.error('[UrlGrpService::UrlGrpPage] getAllUrlGrpPaginationRX:', err);
           return of(this.emptyPaginated());
         })
       );
@@ -47,7 +51,7 @@ export class UrlGrpListPage extends CrudPage<UrlGrpModel> {
 
   // EVENTS -----------------------------------------------------------------
   protected override reload(): void {
-    this.getAllPaginationRX.reload();
+    this.getAllUrlGrpPaginationRX.reload();
   }
 
   protected onCloseForm(): void {
@@ -55,6 +59,7 @@ export class UrlGrpListPage extends CrudPage<UrlGrpModel> {
     this.urlGrp.savePayload.set(null);
   }
 
+  // CRUD -------------------------------------------------------------------
   protected onCreate(): void {
     this.urlGrp.savePayload.set(null);
     this.showFormModal.set(true);

@@ -1,6 +1,6 @@
 import { computed, signal } from "@angular/core";
-import { PaginationRequestModel } from "../models/pagination-request-model";
-import { PaginationResponseModel } from "../models/pagination-response-model";
+import { PaginationRequestModel } from "@shared/models/pagination-request-model";
+import { PaginationResponseModel } from "@shared/models/pagination-response-model";
 
 export abstract class CrudPage<TModel> {
   protected readonly totalPages = signal<number>(1);
@@ -33,7 +33,7 @@ export abstract class CrudPage<TModel> {
   protected onFilterChange(filter: { search: string; limit: number }): void {
     this.search.set(filter.search);
     this.limit.set(filter.limit);
-    this.currentPage.set(1);
+    //this.currentPage.set(1);
   }
 
   protected nextPage(): void {

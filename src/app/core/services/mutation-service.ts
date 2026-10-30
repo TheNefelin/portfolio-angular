@@ -1,6 +1,6 @@
 import { inject, Service, WritableSignal } from "@angular/core";
 import { finalize, Observable } from "rxjs";
-import { SuccessService } from "@core/services/success-service";
+import { ToastService } from "@core/services/toast-service";
 
 interface MutationOptions {
   successMsg: string;
@@ -12,7 +12,7 @@ interface MutationOptions {
 
 @Service()
 export class MutationService {
-  private readonly successService = inject(SuccessService);
+  private readonly toastService = inject(ToastService);
 
   run<T>(
     action: Observable<T>,
@@ -30,7 +30,7 @@ export class MutationService {
     ).subscribe({
       next: () => {
         succeeded = true;
-        this.successService.show(options.successMsg);
+        this.toastService.show(options.successMsg);
         options.onSuccess?.();
       },
       error: (err) => {

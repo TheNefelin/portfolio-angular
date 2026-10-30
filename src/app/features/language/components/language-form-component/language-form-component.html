@@ -1,0 +1,49 @@
+<dialog class="modal modal-bottom modal-open sm:modal-middle">
+  <div class="modal-box overflow-visible grid gap-2">
+    @if (isLoading()) {
+      <app-loading-component class="flex justify-center"/>
+    } @else {
+      <h3 class="text-lg font-bold text-neutral-content text-center">
+        {{ isEditMode() ? 'Modificar' : 'Crear' }} Language
+      </h3>
+
+      @if (errorMessage()) {
+        <app-message-error-component [message]="errorMessage()"/>
+      }
+
+      <div class="grid grid-cols-2 gap-4">
+        <app-image-picker-component
+          [isLoading]="isLoading()"
+          [labelText]="'Language'"
+          [aspectRatio]="'aspect-square'"
+          [displayImg]="data()?.img_url ?? null"
+          (selectedFile)="onFileSelected($event)"
+          (deleteFile)="onDeleteFile()" />
+
+        <fieldset class="fieldset">
+          <label class="label" for="language-name">Nombre</label>
+          <input
+            id="language-name"
+            #name
+            type="text" class="input w-full" placeholder="Nombre"
+            [value]="formData().name"
+            (input)="updateName(name.value)"
+            maxlength="50"
+          />
+        </fieldset>
+      </div>
+
+      <div class="modal-action flex gap-2">
+        <app-button-component
+          [icon]="'create'"
+          [textBtn]="isEditMode() ? 'Guardar' : 'Crear'"
+          (clicked)="submit()" />
+
+        <app-button-component
+          [icon]="'cancel'"
+          [textBtn]="'Cancelar'"
+          (clicked)="closed.emit()" />
+      </div>
+    }
+  </div>
+</dialog>

@@ -9,7 +9,7 @@ export interface ToastModel {
 }
 
 @Service()
-export class SuccessService {
+export class ToastService {
   readonly toasts = signal<ToastModel[]>([]);
   private nextId = 0;
 

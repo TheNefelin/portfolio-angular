@@ -3,7 +3,7 @@ import { NavajaSuizaPage } from "@features/privacy-policy/pages/navaja-suiza-pag
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'navaja-suiza',
     component: NavajaSuizaPage
   }
 ]

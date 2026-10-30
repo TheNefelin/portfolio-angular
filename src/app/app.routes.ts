@@ -3,6 +3,7 @@ import { MainLayoutComponent } from './layouts/main-layout-component/main-layout
 import { NotFoundPage } from './shared/pages/not-found-page/not-found-page';
 import { AdminLayoutComponent } from './layouts/admin-layout-component/admin-layout-component';
 import { ForbiddenPage } from '@shared/pages/forbidden-page/forbidden-page';
+import { NavajaSuizaPage } from '@features/privacy-policy/pages/navaja-suiza-page/navaja-suiza-page';
 
 export const routes: Routes = [
 	{
@@ -48,6 +49,14 @@ export const routes: Routes = [
 				loadChildren: () => import('@features/project/project.routes').then(m => m.routes),
 			},
 		],
+	},
+	{
+		path: 'privacy-policy',
+		loadChildren: () => import('@features/privacy-policy/privacy-policy.routes').then(m => m.routes),
+	},
+	{
+		path: 'navaja-suiza/privacy-policy',
+		component: NavajaSuizaPage
 	},
 	{
 		path: 'forbidden',

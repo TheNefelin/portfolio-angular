@@ -10,7 +10,13 @@ export const ROUTES_CONSTANTS = {
     URL: '/admin/url',
     LAMGUAGE: '/admin/language',
     TECHNOLOGY: '/admin/technology',
-    PROJECT: '/admin/project',
+    PROJECT: {
+      ROOT: '/admin/project',
+      FORM: '/admin/project/form'
+    },
+  },
+  PRIVACY_POLICY: {
+    NAVAJA_SUIZA: '/privacy-policy/navaja-suiza',
   },
 }
 
@@ -20,5 +26,5 @@ export const NAVIGATE_MENU_ITEM: NavigateModel[] = [
   { label: 'Url', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.URL },
   { label: 'Language', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.LAMGUAGE },
   { label: 'Technology', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.TECHNOLOGY },
-  { label: 'Project', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.PROJECT },
+  { label: 'Project', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.PROJECT.ROOT },
 ]
