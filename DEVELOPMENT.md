@@ -30,7 +30,7 @@
 - `ApiService` llama a `/ssr-api/{ruta}` sin credenciales. `src/server.ts` agrega `X-API-Key` y reenvía status y JSON.
 - Feedback: `errorInterceptor` → `ErrorService` → `modal-error`; `ConfirmService` (promesa) → `modal-confirm`; `MutationService` → `ToastService` → `toast`. Los tres componentes se montan una vez en `app.html`.
 - CRUD: `url-grp`, `url`, `language` y `technology` usan modal; `project` usa las páginas `/admin/project/form` y `/admin/project/form/:id`.
-- Auth: `AuthService` (Google y refresh, persiste en `sessionStorage`) y `authInterceptor` existen pero **no están registrados**; `/admin` sigue sin guard.
+- Auth: `AuthPage` monta cuatro accesos (Google, GitHub, Apple y email/contraseña) con `loading`/`disabled` locales y salida `login`; todavía no llaman a `AuthService`. `AuthService` (Google y refresh, persiste en `sessionStorage`) y `authInterceptor` existen pero **no están registrados**; `/admin` sigue sin guard.
 - Alias `@core/*`, `@features/*`, `@layouts/*` y `@shared/*` en `tsconfig.json`; ESLint con `angular-eslint` vía `pnpm lint`.
 
 ## Decisiones
@@ -54,6 +54,9 @@
 
 - Implementar multipart en el BFF: `image-picker` y `uploadImage` de project, language y technology hoy mandan `{}`.
 - Cablear auth: registrar `authInterceptor` con regex sin namespace, `/ssr-api/config` que exponga `GOOGLE_CLIENT_ID`, guard de `/admin` y montar el router de auth en `portfolio-python` (hoy no está incluido en `main.py`).
+- Conectar los botones de `AuthPage` con `AuthService`: hoy solo activan `loading` y deshabilitan el resto; el formulario de email/contraseña no lee sus campos.
+- GitHub y Apple no tienen endpoint en la API: solo existen `/auth/google`, `/auth/refresh` y `/auth/logout`.
+- Revisar los textos de auth (`Login wiithGoogle`) y unificar el idioma de esa UI.
 - Corregir el `id` de `TitleComponent`: usa `id={id}`, las anclas del navbar no apuntan a nada.
 - `FooterComponent` importa un modelo desde `url-grp`: dependencia invertida.
 - `ConsoleComponent` deja `setTimeout` sin limpieza y un `#scrollAnchor` sin uso.
@@ -70,5 +73,5 @@
 ## Estado
 
 - `pnpm build` OK, 6 rutas prerenderizadas.
-- `pnpm test --watch=false`: 48 archivos, 53/53.
+- `pnpm test --watch=false`: 51 archivos, 56/56.
 - `pnpm lint`: limpio.

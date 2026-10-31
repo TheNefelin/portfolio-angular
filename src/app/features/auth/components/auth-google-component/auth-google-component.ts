@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { LoadingComponent } from '@shared/components/loading-component/loading-component';
 
 @Component({
@@ -7,9 +7,7 @@ import { LoadingComponent } from '@shared/components/loading-component/loading-c
   templateUrl: './auth-google-component.html',
 })
 export class AuthGoogleComponent {
-  readonly loading = signal(false);
-  
-  protected async login(): Promise<void> {
-    this.loading.set(true);
-  }
+  readonly loading = input<boolean>(false);
+  readonly disabled = input<boolean>(false);
+  readonly login = output<void>();
 }

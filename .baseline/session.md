@@ -5,34 +5,33 @@
 
 ## Tarea activa
 
-Cerrar las features que faltan en `portfolio-angular` sin tocar auth, y cablear el feedback global.
+Cerrar las features de `portfolio-angular` sin auth. Los cinco CRUD y la HOME quedan completos; auth empieza por la UI.
 
 ## Último avance comprobado
 
-CRUD de `url-grp`, `url`, `language`, `technology` y `project` funcionales. `modal-confirm` y `toast` montados en `app.html`. Render por ruta (`/` Server, `/admin/**` Client). ESLint configurado. Dashboard con accesos a cada CRUD, las dos URLs de privacy policy y `project` vuelve al listado tras crear.
+CRUD de `url-grp`, `url`, `language`, `technology` y `project` funcionales, con `modal-confirm` y `toast` montados en `app.html`. Dashboard con tarjetas a cada CRUD. Las dos URLs de privacy policy funcionan y los tabs de NavajaSuiza muestran ES/EN/SV. `AuthPage` monta Google, GitHub, Apple y email/contraseña, con `loading`/`disabled` locales; aún sin llamar a `AuthService`.
 
 ## Archivos tocados
 
-- `src/app/shared/components/modal-confirm-component/`
-- `src/app/shared/components/toast-component/`
-- `src/app/app.html`, `src/app/app.ts`
-- `src/app/core/services/mutation-service.ts` (ToastService)
-- `src/app/core/services/api-service.ts` (doble slash en upload)
-- `src/app/layouts/{main,admin}-layout-component/`
-- `src/app/app.routes.server.ts`
+- `src/app/features/auth/` (componentes google, github, apple, login y `auth-page`)
+- `src/app/features/privacy-policy/pages/navaja-suiza-page/`
+- `src/app/features/dashboard/pages/dashboard-page/`
+- `src/app/app.routes.ts`, `src/app/shared/constants/routes-constant.ts`
+- `src/app/features/project/pages/project-form-page/project-form-page.ts`
 - `DEVELOPMENT.md`
 
 ## Pruebas ejecutadas y resultado real
 
-- `pnpm build`: OK, 5 rutas prerenderizadas.
-- `pnpm test --watch=false`: 48 archivos, 53/53.
+- `pnpm build`: OK, 6 rutas prerenderizadas.
+- `pnpm test --watch=false`: 51 archivos, 56/56.
 - `pnpm lint`: sin errores.
+- Tabs de NavajaSuiza verificados en navegador: al elegir EN su panel pasa a `block` y ES/SV a `none`.
 
 ## Bloqueos
 
 - Subidas: el BFF solo acepta JSON, no multipart.
-- Auth: interceptor sin registrar, sin guard, sin `/ssr-api/config`; la API de Python no monta el router de auth.
+- Auth: interceptor sin registrar, sin guard, sin `/ssr-api/config`; la API de Python no monta el router de auth y no tiene endpoints de GitHub ni Apple.
 
 ## Siguiente paso
 
-Implementar multipart en el BFF (`server.ts`) para desbloquear `image-picker` y `uploadImage`. Después, cablear auth.
+Cablear `AuthPage` con `AuthService` (login real y manejo de `loading`), o implementar multipart en el BFF para desbloquear `image-picker`.
