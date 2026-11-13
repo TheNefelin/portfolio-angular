@@ -5,7 +5,7 @@ import { ToastService } from '@core/services/toast-service';
 import { catchError, from, switchMap, throwError } from 'rxjs';
 
 const API_PATTERN = /\/ssr-api\/api\//;
-const AUTH_PATTERN = /\/ssr-api\/api\/auth\//;
+const AUTH_PATTERN = /\/ssr-api\/auth\//;
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);

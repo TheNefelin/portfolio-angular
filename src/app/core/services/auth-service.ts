@@ -40,7 +40,10 @@ const GOOGLE_SCRIPT_URL = 'https://accounts.google.com/gsi/client';
 const GOOGLE_SCRIPT_TIMEOUT_MS = 10_000;
 
 // El BFF quita el prefijo /ssr-api y reenvia el resto a la API (/api/auth/...).
-const AUTH_ENDPOINT = '/ssr-api/api/auth';
+// El endpoint del frontend NO lleva /api: el BFF anade el prefijo API_URL (que
+// ya incluye /api) al reenviar. Si se pone /api aqui, el backend recibe
+// /api/api/auth/... y devuelve 404.
+const AUTH_ENDPOINT = '/ssr-api/auth';
 
 const STORAGE_TOKEN = 'auth.access_token';
 const STORAGE_REFRESH = 'auth.refresh_token';

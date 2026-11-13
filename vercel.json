@@ -1,0 +1,5 @@
+{
+  "buildCommand": "pnpm ng build",
+  "outputDirectory": "dist/portfolio-angular",
+  "framework": "angular"
+}
