@@ -47,3 +47,12 @@ Thumbs.db
 .env
 .env.*
 !.env.demo
+
+# agent-baseline: respaldos de instalacion
+.baseline-backup/
+
+# agent-baseline: adaptadores de descubrimiento (generados)
+.agents/skills/
+.clinerules/
+.claude/skills/
+.kilocode/
