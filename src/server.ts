@@ -7,82 +7,26 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 
+// [BFF] ── Inicio del código propio ─────────────────────────────────────────
+// prepara el entorno, CSP con nonce y monta el proxy (no son del scaffold).
+// `env` va PRIMERO: deja process.env listo antes de que config lo lea.
+import '@server/env';
+import { apiProxy } from '@server/proxy/api-proxy';
+import { environment } from '@environments/environment';
+// [BFF] ── Fin del código propio ────────────────────────────────────────────
+
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine({
-  // Angular rechaza los Host que no estén en esta lista (protección SSRF).
-  // En producción, definir NG_ALLOWED_HOSTS con el dominio real.
-  allowedHosts: (process.env['NG_ALLOWED_HOSTS'] ?? 'localhost,127.0.0.1')
-    .split(',')
-    .map((host) => host.trim())
-    .filter((host) => host.length > 0),
-});
+const angularApp = new AngularNodeAppEngine();
 
-// Carga .env si existe. Las variables ya definidas en el entorno tienen prioridad.
-try {
-  process.loadEnvFile();
-} catch {
-  // Sin archivo .env: se usan las variables del proceso.
-}
-
-const API_URL = (process.env['API_URL'] ?? '').replace(/\/+$/, '');
-const API_KEY = process.env['API_KEY'] ?? '';
-
-const PROXY_PREFIX = '/ssr-api';
-const PROXY_TIMEOUT_MS = 15_000;
-const PROXY_METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
-
-function parseJsonSafe(text: string): unknown {
-  try {
-    return JSON.parse(text);
-  } catch {
-    return { detail: text };
-  }
-}
-
-app.use(express.json());
-
-// BFF: el navegador llama a /ssr-api/{ruta} y el servidor agrega la API key.
-// La key nunca sale del proceso del servidor.
-app.use(PROXY_PREFIX, async (req, res) => {
-  if (!PROXY_METHODS.has(req.method)) {
-    res.status(405).json({ detail: `Método no permitido: ${req.method}` });
-    return;
-  }
-
-  if (!API_URL || !API_KEY) {
-    res.status(500).json({ detail: 'Falta configurar API_URL y API_KEY en el servidor.' });
-    return;
-  }
-
-  const sendsBody = req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH';
-
-  try {
-    const response = await fetch(`${API_URL}${req.url}`, {
-      method: req.method,
-      headers: {
-        'X-API-Key': API_KEY,
-        Accept: 'application/json',
-        ...(sendsBody ? { 'Content-Type': 'application/json' } : {}),
-      },
-      body: sendsBody ? JSON.stringify(req.body ?? {}) : undefined,
-      signal: AbortSignal.timeout(PROXY_TIMEOUT_MS),
-    });
-
-    const text = await response.text();
-
-    if (!text) {
-      res.status(response.status).end();
-      return;
-    }
-
-    res.status(response.status).json(parseJsonSafe(text));
-  } catch (err) {
-    console.error('[server.ts] proxy error:', err);
-    res.status(502).json({ detail: 'Error de conexión con la API.' });
-  }
-});
+// [BFF] ── Inicio del código propio ─────────────────────────────────────────
+// Todo lo de este bloque es nuestro (BFF), NO parte del server.ts original:
+// CSP con nonce (producción) y proxy /ssr-api que oculta la URL de la API.
+const SSR_API_URL_PREFIX = environment.ssrApiUrlPrefix;
+app.use(SSR_API_URL_PREFIX, express.json());
+app.use(SSR_API_URL_PREFIX, apiProxy);
+// [BFF] ── Fin del código propio ────────────────────────────────────────────
 
 /**
  * Serve static files from /browser
