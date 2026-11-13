@@ -55,23 +55,27 @@
             @if (!project.repo_url && !project.app_url) {
               <p>without reference</p>
             } @else {
-              <a class="avatar flex items-center gap-2 hover:text-red-400 transition timeline-300" target="_blank"
-                [href]="project.repo_url" >
-                
-                <div class="w-4">
-                  <img ngSrc="images/hero_github.png" alt="GitHub image" width="40" height="40" />
-                </div>
-                <span>GitHub</span>
-              </a>  
-  
-              <a class="avatar flex items-center gap-2 hover:text-red-400 transition timeline-300" target="_blank"
-                [href]="project.app_url" >
-                
-                <div class="w-4">
-                  <img ngSrc="images/card_app.png" alt="App image" width="40" height="40" />
-                </div>
-                <span>App</span>
-              </a> 
+              @if (project.repo_url) {
+                <a class="avatar flex items-center gap-2 hover:text-red-400 transition timeline-300" target="_blank"
+                  [href]="project.repo_url" >
+
+                  <div class="w-4">
+                    <img ngSrc="images/hero_github.png" alt="GitHub image" width="40" height="40" />
+                  </div>
+                  <span>GitHub</span>
+                </a>
+              }
+
+              @if (project.app_url) {
+                <a class="avatar flex items-center gap-2 hover:text-red-400 transition timeline-300" target="_blank"
+                  [href]="project.app_url" >
+
+                  <div class="w-4">
+                    <img ngSrc="images/card_app.png" alt="App image" width="40" height="40" />
+                  </div>
+                  <span>App</span>
+                </a>
+              }
             }
           </div>
         </div>

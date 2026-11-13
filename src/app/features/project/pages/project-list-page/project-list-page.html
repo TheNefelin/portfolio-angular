@@ -106,9 +106,15 @@
                 </div>
               </td>
               <td>
-                <a [href]="item.repo_url" target="_blank" rel="noopener noreferrer" class="text-error">REPO_URL</a>
-                <br />
-                <a [href]="item.app_url" target="_blank" rel="noopener noreferrer" class="text-error">APP_URL</a>
+                @if (item.repo_url) {
+                  <a [href]="item.repo_url" target="_blank" rel="noopener noreferrer" class="text-error">REPO_URL</a>
+                }
+                @if (item.repo_url && item.app_url) {
+                  <br />
+                }
+                @if (item.app_url) {
+                  <a [href]="item.app_url" target="_blank" rel="noopener noreferrer" class="text-error">APP_URL</a>
+                }
               </td>
               <td>
                 <span>{{ item.created_at | date:'yyyy-MM-dd' }}</span>
