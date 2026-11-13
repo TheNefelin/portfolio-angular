@@ -1,17 +1,14 @@
 {
-  "version": 2,
   "buildCommand": "pnpm ng build",
-  "outputDirectory": "dist/portfolio-angular",
-  "builds": [
+  "outputDirectory": "dist/portfolio-angular/browser",
+  "rewrites": [
     {
-      "src": "dist/portfolio-angular/server/server.mjs",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": "dist/portfolio-angular/browser/**"
+      "source": "/ssr-api/:path*",
+      "destination": "${API_URL}/:path*",
+      "headers": {
+        "X-API-Key": "${API_KEY}"
       }
-    }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "dist/portfolio-angular/server/server.mjs" }
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
