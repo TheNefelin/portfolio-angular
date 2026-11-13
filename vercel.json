@@ -2,13 +2,7 @@
   "buildCommand": "pnpm ng build",
   "outputDirectory": "dist/portfolio-angular/browser",
   "rewrites": [
-    {
-      "source": "/ssr-api/:path*",
-      "destination": "${API_URL}/:path*",
-      "headers": {
-        "X-API-Key": "${API_KEY}"
-      }
-    },
+    { "source": "/ssr-api/:path*", "destination": "/api/proxy/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
