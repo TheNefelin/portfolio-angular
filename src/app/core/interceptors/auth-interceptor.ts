@@ -1,39 +1,37 @@
-import { HttpInterceptorFn, HttpRequest } from "@angular/common/http";
-import { inject } from "@angular/core";
-import { AuthService } from "@core/services/auth-service";
-import { ToastService } from "@core/services/toast-service";
-import { catchError, from, switchMap, throwError } from "rxjs";
+import { HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AuthService } from '@core/services/auth-service';
+import { ToastService } from '@core/services/toast-service';
+import { catchError, from, switchMap, throwError } from 'rxjs';
 
-const NAMESPACE_REGEX = /^\/ssr-api\/([^/]+)\//;
-
-function namespaceOf(url: string): string | null {
-  const match = url.match(NAMESPACE_REGEX);
-  return match ? match[1] : null;
-}
+const API_PATTERN = /\/ssr-api\/api\//;
+const AUTH_PATTERN = /\/ssr-api\/api\/auth\//;
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const toastService = inject(ToastService);
 
-  const ns = namespaceOf(req.url);
-  if (!ns || req.url.includes('/auth/')) return next(req);
+  // Solo la API propia y nunca las llamadas de login/refresh/logout.
+  if (!API_PATTERN.test(req.url) || AUTH_PATTERN.test(req.url)) {
+    return next(req);
+  }
 
-  const token = authService.getAccessToken(ns);
-  const authorized = token ? attachToken(req, token) : req;
+  const token = authService.getAccessToken();
 
-  return next(authorized).pipe(
+  return next(token ? attachToken(req, token) : req).pipe(
     catchError((error) => {
       if (error?.status !== 401 || !token) {
         return throwError(() => error);
       }
 
-      return from(authService.refresh(ns)).pipe(
+      return from(authService.refresh()).pipe(
         switchMap((newToken) => {
           if (!newToken) {
-            authService.logout(ns);
+            void authService.logout();
             toastService.show('Sesión expirada, inicia sesión de nuevo', 'info');
             return throwError(() => error);
           }
+
           return next(attachToken(req, newToken));
         }),
       );

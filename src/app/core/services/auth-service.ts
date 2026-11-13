@@ -1,4 +1,5 @@
-import { Service, signal, WritableSignal } from "@angular/core";
+import { Service } from '@angular/core';
+import { environment } from '@environments/environment';
 
 export interface AuthUser {
   id_user: string;
@@ -14,6 +15,11 @@ export interface AuthSession {
   user: AuthUser;
 }
 
+interface GoogleTokenResponse {
+  access_token?: string;
+  error?: string;
+}
+
 declare global {
   interface Window {
     google?: {
@@ -22,7 +28,7 @@ declare global {
           initTokenClient: (config: {
             client_id: string;
             scope: string;
-            callback: (response: { access_token?: string; error?: string }) => void;
+            callback: (response: GoogleTokenResponse) => void;
           }) => { requestAccessToken: () => void };
         };
       };
@@ -30,10 +36,15 @@ declare global {
   }
 }
 
-const KEY = (ns: string, suffix: string) => `auth.${ns}.${suffix}`;
-
 const GOOGLE_SCRIPT_URL = 'https://accounts.google.com/gsi/client';
-const GOOGLE_SCRIPT_TIMEOUT_MS = 10000;
+const GOOGLE_SCRIPT_TIMEOUT_MS = 10_000;
+
+// El BFF quita el prefijo /ssr-api y reenvia el resto a la API (/api/auth/...).
+const AUTH_ENDPOINT = '/ssr-api/api/auth';
+
+const STORAGE_TOKEN = 'auth.access_token';
+const STORAGE_REFRESH = 'auth.refresh_token';
+const STORAGE_USER = 'auth.user';
 
 function loadGoogleScript(): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -43,102 +54,46 @@ function loadGoogleScript(): Promise<void> {
     }
 
     const script = document.createElement('script');
+    let timeout = 0;
+
+    const fail = (message: string) => {
+      clearTimeout(timeout);
+      script.remove();
+      reject(new Error(message));
+    };
+
+    timeout = window.setTimeout(
+      () => fail('Tiempo de espera agotado cargando el script de Google'),
+      GOOGLE_SCRIPT_TIMEOUT_MS,
+    );
+
     script.src = GOOGLE_SCRIPT_URL;
     script.async = true;
     script.onload = () => {
       clearTimeout(timeout);
       resolve();
     };
-    script.onerror = () => {
-      clearTimeout(timeout);
-      script.remove();
-      reject(new Error('No se pudo cargar el script de Google'));
-    };
+    script.onerror = () => fail('No se pudo cargar el script de Google');
     document.head.appendChild(script);
-
-    const timeout = setTimeout(() => {
-      script.remove();
-      reject(new Error('Tiempo de espera agotado cargando el script de Google'));
-    }, GOOGLE_SCRIPT_TIMEOUT_MS);
   });
 }
 
 @Service()
 export class AuthService {
-  private readonly googleClientIds = new Map<string, string>();
-  private readonly sessionSignals = new Map<string, WritableSignal<AuthSession | null>>();
+  // undefined = sin hidratar; sessionStorage se lee una sola vez.
+  private session: AuthSession | null | undefined;
 
-  sessionSignal(ns: string): WritableSignal<AuthSession | null> {
-    let sig = this.sessionSignals.get(ns);
-    if (!sig) {
-      sig = signal<AuthSession | null>(this.getSession(ns));
-      this.sessionSignals.set(ns, sig);
-    }
-    return sig;
+  getAccessToken(): string | null {
+    return this.getSession()?.token ?? null;
   }
 
-  async getGoogleClientId(ns: string): Promise<string> {
-    const cached = this.googleClientIds.get(ns);
-    if (cached) return cached;
-
-    const res = await fetch('/ssr-api/config');
-    if (!res.ok) throw new Error('No se pudo cargar la configuración');
-
-    const data: { googleClientIds: Record<string, string> } = await res.json();
-    const clientId = data.googleClientIds[ns] ?? '';
+  async loginWithGoogle(): Promise<void> {
+    const clientId = environment.googleClientId;
 
     if (!clientId) {
-      throw new Error(`Google login no configurado para el namespace "${ns}"`);
+      throw new Error('Google login no configurado: falta environment.googleClientId');
     }
 
-    this.googleClientIds.set(ns, clientId);
-    return clientId;
-  }
-
-  getSession(ns: string): AuthSession | null {
-    if (typeof sessionStorage === 'undefined') return null;
-
-    const token = sessionStorage.getItem(KEY(ns, 'access_token'));
-    const refreshToken = sessionStorage.getItem(KEY(ns, 'refresh_token'));
-    const userRaw = sessionStorage.getItem(KEY(ns, 'user'));
-
-    if (!token || !userRaw) return null;
-
-    try {
-      return { token, refresh_token: refreshToken ?? '', user: JSON.parse(userRaw) as AuthUser };
-    } catch {
-      return null;
-    }
-  }
-
-  getAccessToken(ns: string): string | null {
-    return this.getSession(ns)?.token ?? null;
-  }
-
-  isAuthenticated(ns: string): boolean {
-    return !!this.getAccessToken(ns);
-  }
-
-  private setSession(ns: string, session: AuthSession): void {
-    if (typeof sessionStorage === 'undefined') return;
-
-    sessionStorage.setItem(KEY(ns, 'access_token'), session.token);
-    sessionStorage.setItem(KEY(ns, 'refresh_token'), session.refresh_token);
-    sessionStorage.setItem(KEY(ns, 'user'), JSON.stringify(session.user));
-    this.sessionSignals.get(ns)?.set(session);
-  }
-
-  private clearSession(ns: string): void {
-    if (typeof sessionStorage === 'undefined') return;
-
-    sessionStorage.removeItem(KEY(ns, 'access_token'));
-    sessionStorage.removeItem(KEY(ns, 'refresh_token'));
-    sessionStorage.removeItem(KEY(ns, 'user'));
-    this.sessionSignals.get(ns)?.set(null);
-  }
-
-  async loginWithGoogle(ns: string): Promise<void> {
-    const clientId = await this.getGoogleClientId(ns);
     await loadGoogleScript();
 
     if (!window.google) {
@@ -149,32 +104,13 @@ export class AuthService {
       const client = window.google!.accounts.oauth2.initTokenClient({
         client_id: clientId,
         scope: 'openid email profile',
-        callback: async (response) => {
+        callback: (response) => {
           if (!response.access_token || response.error) {
-            reject(new Error(response.error ?? 'Error al autenticar'));
+            reject(new Error(response.error ?? 'Error al autenticar con Google'));
             return;
           }
 
-          try {
-            const res = await fetch(`/ssr-api/${ns}/auth/google`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ googleToken: response.access_token }),
-            });
-
-            if (!res.ok) {
-              const err = await res.json().catch(() => null);
-              const detail = err?.detail;
-              reject(new Error(typeof detail === 'string' ? detail : 'Error al autenticar'));
-              return;
-            }
-
-            const data = (await res.json()) as AuthSession;
-            this.setSession(ns, data);
-            resolve();
-          } catch (err) {
-            reject(err);
-          }
+          this.exchangeGoogleToken(response.access_token).then(resolve, reject);
         },
       });
 
@@ -182,50 +118,104 @@ export class AuthService {
     });
   }
 
-  async refresh(ns: string): Promise<string | null> {
-    const session = this.getSession(ns);
+  async refresh(): Promise<string | null> {
+    const session = this.getSession();
     if (!session?.refresh_token) return null;
 
     try {
-      const res = await fetch(`/ssr-api/${ns}/auth/refresh`, {
+      const res = await fetch(`${AUTH_ENDPOINT}/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh_token: session.refresh_token }),
       });
 
       if (!res.ok) {
-        this.clearSession(ns);
+        this.clearSession();
         return null;
       }
 
       const data = (await res.json()) as { token: string; refresh_token: string };
-      this.setSession(ns, {
-        token: data.token,
-        refresh_token: data.refresh_token,
-        user: session.user,
-      });
+      this.setSession({ token: data.token, refresh_token: data.refresh_token, user: session.user });
       return data.token;
     } catch {
-      this.clearSession(ns);
+      this.clearSession();
       return null;
     }
   }
 
-  async logout(ns: string): Promise<void> {
-    const session = this.getSession(ns);
+  async logout(): Promise<void> {
+    const session = this.getSession();
 
     if (session?.refresh_token) {
       try {
-        await fetch(`/ssr-api/${ns}/auth/logout`, {
+        await fetch(`${AUTH_ENDPOINT}/logout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refresh_token: session.refresh_token }),
         });
       } catch {
-        // El logout remoto falla, pero la sesión local se limpia igual
+        // El logout remoto puede fallar; la sesión local se limpia igual.
       }
     }
 
-    this.clearSession(ns);
+    this.clearSession();
+  }
+
+  private async exchangeGoogleToken(googleToken: string): Promise<void> {
+    const res = await fetch(`${AUTH_ENDPOINT}/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ googleToken }),
+    });
+
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as { detail?: unknown } | null;
+      const detail = body?.detail;
+      throw new Error(typeof detail === 'string' ? detail : 'Error al autenticar con Google');
+    }
+
+    this.setSession((await res.json()) as AuthSession);
+  }
+
+  private getSession(): AuthSession | null {
+    if (this.session === undefined) {
+      this.session = this.readSession();
+    }
+
+    return this.session;
+  }
+
+  private readSession(): AuthSession | null {
+    if (typeof sessionStorage === 'undefined') return null;
+
+    const token = sessionStorage.getItem(STORAGE_TOKEN);
+    const refreshToken = sessionStorage.getItem(STORAGE_REFRESH);
+    const user = sessionStorage.getItem(STORAGE_USER);
+
+    if (!token || !user) return null;
+
+    try {
+      return { token, refresh_token: refreshToken ?? '', user: JSON.parse(user) as AuthUser };
+    } catch {
+      return null;
+    }
+  }
+
+  private setSession(session: AuthSession): void {
+    this.session = session;
+    if (typeof sessionStorage === 'undefined') return;
+
+    sessionStorage.setItem(STORAGE_TOKEN, session.token);
+    sessionStorage.setItem(STORAGE_REFRESH, session.refresh_token);
+    sessionStorage.setItem(STORAGE_USER, JSON.stringify(session.user));
+  }
+
+  private clearSession(): void {
+    this.session = null;
+    if (typeof sessionStorage === 'undefined') return;
+
+    sessionStorage.removeItem(STORAGE_TOKEN);
+    sessionStorage.removeItem(STORAGE_REFRESH);
+    sessionStorage.removeItem(STORAGE_USER);
   }
 }

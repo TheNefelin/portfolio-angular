@@ -5,33 +5,33 @@
 
 ## Tarea activa
 
-Cerrar las features de `portfolio-angular` sin auth. Los cinco CRUD y la HOME quedan completos; auth empieza por la UI.
+Limpiar la feature de auth y dejar cableado solo el login de Google.
 
 ## Último avance comprobado
 
-CRUD de `url-grp`, `url`, `language`, `technology` y `project` funcionales, con `modal-confirm` y `toast` montados en `app.html`. Dashboard con tarjetas a cada CRUD. Las dos URLs de privacy policy funcionan y los tabs de NavajaSuiza muestran ES/EN/SV. `AuthPage` monta Google, GitHub, Apple y email/contraseña, con `loading`/`disabled` locales; aún sin llamar a `AuthService`.
+`AuthPage` llama a `AuthService.loginWithGoogle()`, que toma el client ID de `environment.googleClientId` (ya no de `/ssr-api/config`) y cambia el `access_token` por una sesión en `/ssr-api/api/auth/google`. `authInterceptor` está registrado y agrega `Authorization` a `/ssr-api/api/*`, con refresh en 401. La sesión se lee de `sessionStorage` una sola vez y vive en memoria. GitHub, Apple y email siguen sin backend: muestran «Disponible próximamente».
 
 ## Archivos tocados
 
-- `src/app/features/auth/` (componentes google, github, apple, login y `auth-page`)
-- `src/app/features/privacy-policy/pages/navaja-suiza-page/`
-- `src/app/features/dashboard/pages/dashboard-page/`
-- `src/app/app.routes.ts`, `src/app/shared/constants/routes-constant.ts`
-- `src/app/features/project/pages/project-form-page/project-form-page.ts`
-- `DEVELOPMENT.md`
+- `src/app/core/services/auth-service.ts`
+- `src/app/core/interceptors/{auth,error}-interceptor.ts`
+- `src/app/app.config.ts`
+- `src/app/features/auth/pages/auth-page/` y `components/auth-{google,github,apple,login}-component/`
+- `src/environments/environment.ts`, `tsconfig.json`, `DEVELOPMENT.md`
 
 ## Pruebas ejecutadas y resultado real
 
 - `pnpm build`: OK, 6 rutas prerenderizadas.
-- `pnpm test --watch=false`: 51 archivos, 56/56.
+- `pnpm test`: 51 archivos, 56/56.
 - `pnpm lint`: sin errores.
-- Tabs de NavajaSuiza verificados en navegador: al elegir EN su panel pasa a `block` y ES/SV a `none`.
+- Bundle: el client ID aparece en `main-*.js` (es público); `X-API-Key` no aparece.
 
 ## Bloqueos
 
-- Subidas: el BFF solo acepta JSON, no multipart.
-- Auth: interceptor sin registrar, sin guard, sin `/ssr-api/config`; la API de Python no monta el router de auth y no tiene endpoints de GitHub ni Apple.
+- `/ssr-api/api/auth/*` devuelve 404: `portfolio-python` no monta el router de auth y el módulo no importa.
+- `/admin` sigue sin guard.
+- Multipart en el BFF pendiente.
 
 ## Siguiente paso
 
-Cablear `AuthPage` con `AuthService` (login real y manejo de `loading`), o implementar multipart en el BFF para desbloquear `image-picker`.
+Montar el router de auth en `portfolio-python` y alinear `GOOGLE_CLIENT_ID` de la API con el client ID del front. Sin eso el login no completa.

@@ -1,8 +1,23 @@
 <section class="grid gap-2 justify-center items-center p-4">
-  
-  <app-auth-google-component [loading]="loadingGoogle()" [disabled]="disabled()" (login)="loginGoogle()"/>
-  <app-auth-github-component [loading]="loadingGitHub()" [disabled]="disabled()" (login)="loginGitHub()"/>
-  <app-auth-apple-component [loading]="loadingApple()" [disabled]="disabled()" (login)="loginApple()"/>
-  <app-auth-login-component [loading]="loadingAuth()" [disabled]="disabled()" (login)="loginAuth()"/>
+
+  <app-auth-google-component
+    [loading]="isBusy('google')"
+    [disabled]="disabled()"
+    (login)="loginGoogle()"/>
+
+  <app-auth-github-component
+    [loading]="isBusy('github')"
+    [disabled]="disabled()"
+    (login)="loginGitHub()"/>
+
+  <app-auth-apple-component
+    [loading]="isBusy('apple')"
+    [disabled]="disabled()"
+    (login)="loginApple()"/>
+
+  <app-auth-login-component
+    [loading]="isBusy('credentials')"
+    [disabled]="disabled()"
+    (login)="loginAuth()"/>
 
 </section>

@@ -20,7 +20,7 @@
 | Base de listados | `src/app/shared/base/crud-page.ts` | al cambiar paginación o filtro |
 | Navegación | `src/app/shared/constants/routes-constant.ts` | al agregar rutas o ítems del menú |
 | Compartidos | `src/app/shared/components/` | al reutilizar UI |
-| Config | `angular.json`, `tsconfig.json`, `eslint.config.js`, `.env.demo` | al cambiar build, paths, lint o entorno |
+| Config | `angular.json`, `tsconfig.json`, `eslint.config.js`, `src/environments/environment.ts`, `.env.demo` | al cambiar build, paths, lint o entorno |
 
 ## Cómo funciona
 
@@ -30,7 +30,7 @@
 - `ApiService` llama a `/ssr-api/{ruta}` sin credenciales. `src/server.ts` agrega `X-API-Key` y reenvía status y JSON.
 - Feedback: `errorInterceptor` → `ErrorService` → `modal-error`; `ConfirmService` (promesa) → `modal-confirm`; `MutationService` → `ToastService` → `toast`. Los tres componentes se montan una vez en `app.html`.
 - CRUD: `url-grp`, `url`, `language` y `technology` usan modal; `project` usa las páginas `/admin/project/form` y `/admin/project/form/:id`.
-- Auth: `AuthPage` monta cuatro accesos (Google, GitHub, Apple y email/contraseña) con `loading`/`disabled` locales y salida `login`; todavía no llaman a `AuthService`. `AuthService` (Google y refresh, persiste en `sessionStorage`) y `authInterceptor` existen pero **no están registrados**; `/admin` sigue sin guard.
+- Auth: `AuthPage` cablea solo Google contra `AuthService`; GitHub, Apple y email son UI que avisa «Disponible próximamente» vía `toast`. `AuthService` (Google, refresh y logout, persiste en `sessionStorage`) toma el client ID de `environment.googleClientId` y trabaja la sesión con caché en memoria; `authInterceptor` está registrado y agrega `Authorization` a `/ssr-api/api/*`. `/admin` sigue sin guard.
 - Alias `@core/*`, `@features/*`, `@layouts/*` y `@shared/*` en `tsconfig.json`; ESLint con `angular-eslint` vía `pnpm lint`.
 
 ## Decisiones
@@ -47,22 +47,20 @@
 | Aceptado | ESLint con `angular-eslint` y reglas de accesibilidad de templates. | Verificación automática, no solo revisión visual. |
 | Aceptado | `project` con página de formulario; el resto en modal. | Tiene selects y subida de imagen. |
 | Aceptado | Mantener las dos URLs de privacy policy: `/privacy-policy/navaja-suiza` y `/navaja-suiza/privacy-policy`. | Ambas están publicadas y hay enlaces externos a las dos. |
-| Pendiente | Auth sin namespace: el BFF ignora `{ns}`. | Hoy `/ssr-api/{ns}/auth/*` no llega a la API. |
+| Aceptado | Client ID de Google en `environment.ts`, no en el BFF. | Es público por diseño; la API valida `aud` contra `GOOGLE_CLIENT_ID`. |
 | Pendiente | Sesión en `sessionStorage` vs cookie `httpOnly`. | Cualquier XSS lee los tokens. |
 
 ## Pendientes
 
 - Implementar multipart en el BFF: `image-picker` y `uploadImage` de project, language y technology hoy mandan `{}`.
-- Cablear auth: registrar `authInterceptor` con regex sin namespace, `/ssr-api/config` que exponga `GOOGLE_CLIENT_ID`, guard de `/admin` y montar el router de auth en `portfolio-python` (hoy no está incluido en `main.py`).
-- Conectar los botones de `AuthPage` con `AuthService`: hoy solo activan `loading` y deshabilitan el resto; el formulario de email/contraseña no lee sus campos.
-- GitHub y Apple no tienen endpoint en la API: solo existen `/auth/google`, `/auth/refresh` y `/auth/logout`.
-- Revisar los textos de auth (`Login wiithGoogle`) y unificar el idioma de esa UI.
+- **Auth, backend:** `src/api/auth/` de `portfolio-python` no importa y el router no está en `main.py`, así que `/ssr-api/api/auth/*` devuelve 404 y el login de Google no completa.
+- **Guard de `/admin`:** no existe; el admin sigue abierto.
+- GitHub, Apple y email no tienen endpoint: solo existen `/auth/google`, `/auth/refresh` y `/auth/logout`.
 - Corregir el `id` de `TitleComponent`: usa `id={id}`, las anclas del navbar no apuntan a nada.
 - `FooterComponent` importa un modelo desde `url-grp`: dependencia invertida.
 - `ConsoleComponent` deja `setTimeout` sin limpieza y un `#scrollAnchor` sin uso.
 - El navbar usa `href` en algunos enlaces; puede recargar y perder estado del router.
 - Restaurar `NG_ALLOWED_HOSTS` en `.env.demo` y definirlo con el dominio real al desplegar.
-- Quitar el bloque comentado de `error-interceptor`.
 
 ## Seguridad
 

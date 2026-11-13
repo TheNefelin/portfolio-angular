@@ -1,8 +1,13 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { AuthGoogleComponent } from '@features/auth/components/auth-google-component/auth-google-component';
 import { AuthGithubComponent } from '@features/auth/components/auth-github-component/auth-github-component';
 import { AuthAppleComponent } from '@features/auth/components/auth-apple-component/auth-apple-component';
 import { AuthLoginComponent } from '@features/auth/components/auth-login-component/auth-login-component';
+import { AuthService } from '@core/services/auth-service';
+import { ErrorService } from '@core/services/error-service';
+import { ToastService } from '@core/services/toast-service';
+
+type AuthProvider = 'google' | 'github' | 'apple' | 'credentials';
 
 @Component({
   imports: [AuthGoogleComponent, AuthGithubComponent, AuthAppleComponent, AuthLoginComponent],
@@ -10,29 +15,49 @@ import { AuthLoginComponent } from '@features/auth/components/auth-login-compone
   templateUrl: './auth-page.html',
 })
 export class AuthPage {
-  protected readonly loadingAuth = signal<boolean>(false);
-  protected readonly loadingApple = signal<boolean>(false);
-  protected readonly loadingGoogle = signal<boolean>(false);
-  protected readonly loadingGitHub = signal<boolean>(false);
-  protected readonly disabled = signal<boolean>(false);
+  private readonly authService = inject(AuthService);
+  private readonly errorService = inject(ErrorService);
+  private readonly toastService = inject(ToastService);
 
-  protected async loginAuth(): Promise<void> {
-    this.loadingAuth.set(true);
-    this.disabled.set(true);
+  protected readonly busy = signal<AuthProvider | null>(null);
+  protected readonly disabled = computed(() => this.busy() !== null);
+
+  protected isBusy(provider: AuthProvider): boolean {
+    return this.busy() === provider;
   }
 
-  protected async loginApple(): Promise<void> {
-    this.loadingApple.set(true);
-    this.disabled.set(true);
+  protected loginGoogle(): Promise<void> {
+    return this.run('google', () => this.authService.loginWithGoogle());
   }
 
-  protected async loginGoogle(): Promise<void> {
-    this.loadingGoogle.set(true);
-    this.disabled.set(true);
+  protected loginGitHub(): Promise<void> {
+    return this.run('github');
   }
 
-  protected async loginGitHub(): Promise<void> {
-    this.loadingGitHub.set(true);
-    this.disabled.set(true);
+  protected loginApple(): Promise<void> {
+    return this.run('apple');
+  }
+
+  protected loginAuth(): Promise<void> {
+    return this.run('credentials');
+  }
+
+  // Solo Google tiene backend. Los demás avisan en vez de comer el click.
+  private async run(provider: AuthProvider, action?: () => Promise<void>): Promise<void> {
+    if (this.busy()) return;
+
+    if (!action) {
+      this.toastService.show('Disponible próximamente', 'info');
+      return;
+    }
+
+    this.busy.set(provider);
+    try {
+      await action();
+    } catch (error) {
+      this.errorService.show(error instanceof Error ? error.message : 'Error al iniciar sesión');
+    } finally {
+      this.busy.set(null);
+    }
   }
 }
