@@ -1,8 +1,0 @@
-{
-  "buildCommand": "pnpm ng build",
-  "outputDirectory": "dist/portfolio-angular/browser",
-  "rewrites": [
-    { "source": "/ssr-api/:path*", "destination": "/api/proxy/:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
