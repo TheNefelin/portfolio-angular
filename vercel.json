@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "buildCommand": "pnpm ng build",
+  "outputDirectory": "dist/portfolio-angular",
+  "builds": [
+    {
+      "src": "dist/portfolio-angular/server/server.mjs",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": "dist/portfolio-angular/browser/**"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "dist/portfolio-angular/server/server.mjs" }
+  ]
+}
