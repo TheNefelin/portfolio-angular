@@ -2,7 +2,7 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   // HOME: SEO y datos por request.
-  { path: '', renderMode: RenderMode.Server },
+  { path: '', renderMode: RenderMode.Prerender },
   // Admin: privado, sin SEO. Se renderiza en el navegador.
   { path: 'admin', renderMode: RenderMode.Client },
   { path: 'admin/**', renderMode: RenderMode.Client },
