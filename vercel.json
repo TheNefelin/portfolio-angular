@@ -4,6 +4,10 @@
     {
       "source": "/ssr-api/(.*)",
       "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/api"
     }
   ],
   "functions": {
