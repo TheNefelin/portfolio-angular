@@ -18,7 +18,16 @@ import { environment } from '@environments/environment';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+const angularApp = new AngularNodeAppEngine({
+  // Angular rechaza los Host que no estén en esta lista (protección SSRF).
+  // Fallback seguro: si NG_ALLOWED_HOSTS no está definido, se usa VERCEL_URL
+  // (variable que Vercel setea automáticamente) y, si tampoco existe, se
+  // rechazan TODOS los hosts (fail-closed, sin fallback inseguro).
+  allowedHosts: (process.env['NG_ALLOWED_HOSTS'] ?? process.env['VERCEL_URL'] ?? process.env['VERCEL_PROJECT_PRODUCTION_URL'] ?? '')
+    .split(',')
+    .map((host) => host.trim())
+    .filter((host) => host.length > 0),
+});
 
 // [BFF] ── Inicio del código propio ─────────────────────────────────────────
 // Todo lo de este bloque es nuestro (BFF), NO parte del server.ts original:
