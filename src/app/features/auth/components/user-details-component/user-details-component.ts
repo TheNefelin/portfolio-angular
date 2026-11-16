@@ -1,0 +1,27 @@
+import { NgOptimizedImage } from '@angular/common';
+import { Component, computed, input, output } from '@angular/core';
+import { UserProfile } from '@features/auth/models/user-profile';
+
+@Component({
+  imports: [NgOptimizedImage],
+  selector: 'app-user-details-component',
+  templateUrl: './user-details-component.html',
+})
+export class UserDetailsComponent {
+  readonly profile = input.required<UserProfile>();
+  readonly logout = output<void>();
+
+  protected readonly displayName = computed(() => {
+    const fullName = [this.profile().name, this.profile().lastname]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+    return fullName || this.profile().email || 'Usuario';
+  });
+  protected readonly initial = computed(
+    () => this.displayName().trim().charAt(0).toUpperCase() || '?',
+  );
+  protected readonly pictureUrl = computed(
+    () => this.profile().picture_url || '/images/user.jpg',
+  );
+}
