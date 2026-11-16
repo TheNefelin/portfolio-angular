@@ -5,33 +5,35 @@
 
 ## Tarea activa
 
-Limpiar la feature de auth y dejar cableado solo el login de Google.
+Alinear el contrato de auth entre `portfolio-angular` y `portfolio-python`. Es el bloqueante actual: el login de Google no completa.
 
 ## Último avance comprobado
 
-`AuthPage` llama a `AuthService.loginWithGoogle()`, que toma el client ID de `environment.googleClientId` (ya no de `/ssr-api/config`) y cambia el `access_token` por una sesión en `/ssr-api/api/auth/google`. `authInterceptor` está registrado y agrega `Authorization` a `/ssr-api/api/*`, con refresh en 401. La sesión se lee de `sessionStorage` una sola vez y vive en memoria. GitHub, Apple y email siguen sin backend: muestran «Disponible próximamente».
+El backend **sí** está implementado y montado: `portfolio-python/src/main.py` incluye `auth_router` bajo `/api` y expone `/api/auth/{google,login,register,refresh,logout,me}`. El BFF responde bien: `GET /ssr-api/url-grp` → 200, `GET /ssr-api/project/pagination` → 200 (17 proyectos), `POST /ssr-api/auth/google` → 401 con token falso. La memoria de los tres proyectos quedó actualizada (auth implementado, contratos anotados).
+
+Desalineaciones confirmadas:
+
+- La API devuelve `{access_token, refresh_token, token_type, expires_in}`; `AuthService` lee `{token, refresh_token, user}` → `token` queda `undefined`.
+- La API no devuelve `user`; el front espera `id_user`/`picture` y la API usa `id`/`picture_url`.
+- El `logout` del front manda `{refresh_token}`; la API exige `Bearer` y no recibe body.
+- `authInterceptor` filtra por `/ssr-api/api/`, pero `ApiService` llama `/ssr-api/{ruta}`: nunca adjunta `Authorization`.
 
 ## Archivos tocados
 
-- `src/app/core/services/auth-service.ts`
-- `src/app/core/interceptors/{auth,error}-interceptor.ts`
-- `src/app/app.config.ts`
-- `src/app/features/auth/pages/auth-page/` y `components/auth-{google,github,apple,login}-component/`
-- `src/environments/environment.ts`, `tsconfig.json`, `DEVELOPMENT.md`
+- `DEVELOPMENT.md` (raíz), `portfolio-angular/DEVELOPMENT.md`, `portfolio-python/DEVELOPMENT.md`
+- `.baseline/session.md` (este archivo y el de `portfolio-python`)
 
 ## Pruebas ejecutadas y resultado real
 
-- `pnpm build`: OK, 6 rutas prerenderizadas.
-- `pnpm test`: 51 archivos, 56/56.
-- `pnpm lint`: sin errores.
-- Bundle: el client ID aparece en `main-*.js` (es público); `X-API-Key` no aparece.
+- `pnpm test --watch=false` (portfolio-angular): 52 archivos, 61/61.
+- `pnpm build` (portfolio-angular): OK, 7 rutas prerenderizadas.
+- Endpoints del BFF contra la API local, por HTTP: los tres códigos de arriba.
+- `pytest` **no** se ejecutó: el fixture `setup_db` hace `drop_all` sobre la BD configurada, que puede ser la misma que usa la API en vivo.
 
 ## Bloqueos
 
-- `/ssr-api/api/auth/*` devuelve 404: `portfolio-python` no monta el router de auth y el módulo no importa.
-- `/admin` sigue sin guard.
-- Multipart en el BFF pendiente.
+- Falta decidir en qué lado se alinea el contrato (cambiar el DTO de la API o adaptar el front).
 
 ## Siguiente paso
 
-Montar el router de auth en `portfolio-python` y alinear `GOOGLE_CLIENT_ID` de la API con el client ID del front. Sin eso el login no completa.
+Proponer el ajuste de contrato (preferible: que la API devuelva `token` y `user`, en la forma que el front ya consume) y luego el guard de `/admin`.
