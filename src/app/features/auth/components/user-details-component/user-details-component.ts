@@ -22,6 +22,6 @@ export class UserDetailsComponent {
     () => this.displayName().trim().charAt(0).toUpperCase() || '?',
   );
   protected readonly pictureUrl = computed(
-    () => this.profile().picture_url || '/images/user.jpg',
+    () => this.profile().picture_url || '/images/user.png',
   );
 }
