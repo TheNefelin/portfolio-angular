@@ -11,30 +11,30 @@ import { join } from 'node:path';
 // prepara el entorno, CSP con nonce y monta el proxy (no son del scaffold).
 // `env` va PRIMERO: deja process.env listo antes de que config lo lea.
 import '@server/env';
-import { apiProxy } from '@server/proxy/api-proxy';
+import { bff } from '@server/bff';
 import { environment } from '@environments/environment';
 // [BFF] ── Fin del código propio ────────────────────────────────────────────
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine({
-  // Angular rechaza los Host que no estén en esta lista (protección SSRF).
-  // Fallback seguro: si NG_ALLOWED_HOSTS no está definido, se usa VERCEL_URL
-  // (variable que Vercel setea automáticamente) y, si tampoco existe, se
-  // rechazan TODOS los hosts (fail-closed, sin fallback inseguro).
-  allowedHosts: (process.env['NG_ALLOWED_HOSTS'] ?? process.env['VERCEL_URL'] ?? process.env['VERCEL_PROJECT_PRODUCTION_URL'] ?? '')
-    .split(',')
-    .map((host) => host.trim())
-    .filter((host) => host.length > 0),
-});
+
+// [BFF] ── Inicio del código propio ─────────────────────────────────────────
+// Hosts que Angular acepta (protección SSRF), separados por coma y sin
+// protocolo ni puerto. Sin la variable, la lista queda vacía y se rechazan
+// TODOS los hosts (fail-closed).
+const allowedHosts = (process.env['ALLOWED_HOSTS'] ?? '')
+  .split(',')
+  .map((host) => host.trim())
+  .filter(Boolean);
+
+const angularApp = new AngularNodeAppEngine({ allowedHosts });
+// [BFF] ── Fin del código propio ────────────────────────────────────────────
 
 // [BFF] ── Inicio del código propio ─────────────────────────────────────────
 // Todo lo de este bloque es nuestro (BFF), NO parte del server.ts original:
 // CSP con nonce (producción) y proxy /ssr-api que oculta la URL de la API.
-const SSR_API_URL_PREFIX = environment.ssrApiUrlPrefix;
-app.use(SSR_API_URL_PREFIX, express.json());
-app.use(SSR_API_URL_PREFIX, apiProxy);
+app.use(environment.ssrApiUrlPrefix, bff);
 // [BFF] ── Fin del código propio ────────────────────────────────────────────
 
 /**

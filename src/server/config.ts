@@ -10,18 +10,11 @@
 
 function required(name: string): string {
   const value = process.env[name];
-  if (!value) {
-    throw new Error(
-      `Falta la variable de entorno del servidor: ${name}. ` +
-      'Defínela en el .env del frontend (ver .env.demo).',
-    );
-  }
+  if (!value) throw new Error(`Falta la variable de entorno del servidor: ${name}.`);
   return value;
 }
 
 export const serverConfig = {
-  /** URL interna de la API FastAPI (no expuesta al navegador). */
-  apiUrl: required('API_URL'),
-  /** API Key que el BFF añade a cada llamada a FastAPI (nunca al navegador). */
-  apiKey: required('API_KEY'),
-} as const;
+  get apiUrl() { return required('API_URL'); },
+  get apiKey() { return required('API_KEY'); },
+};
