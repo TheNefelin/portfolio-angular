@@ -2,8 +2,6 @@ import { NavigateModel } from "../models/navigate-model"
 
 export const ROUTES_CONSTANTS = {
   HOME: '/',
-  FORBIDDEN: '/forbidden',
-  NOT_FOUND: '/not-found',
   ADMIN: {
     DASHBOARD: '/admin',
     URL_GRP: '/admin/url-grp',

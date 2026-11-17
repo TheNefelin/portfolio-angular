@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layouts/main-layout-component/main-layout-component';
 import { NotFoundPage } from './shared/pages/not-found-page/not-found-page';
 import { AdminLayoutComponent } from './layouts/admin-layout-component/admin-layout-component';
-import { ForbiddenPage } from '@shared/pages/forbidden-page/forbidden-page';
 
 export const routes: Routes = [
 	{
@@ -56,14 +55,6 @@ export const routes: Routes = [
 	{
 		path: 'navaja-suiza/privacy-policy',
 		loadComponent: () => import('@features/privacy-policy/pages/navaja-suiza-page/navaja-suiza-page').then(m => m.NavajaSuizaPage),
-	},
-	{
-		path: 'forbidden',
-		component: ForbiddenPage,
-	},
-	{
-		path: 'not-found',
-		component: NotFoundPage,
 	},
 	{
 		path: '**',
