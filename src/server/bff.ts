@@ -1,5 +1,7 @@
 import express, { Router, type ErrorRequestHandler } from 'express';
 import { crudProxy } from '@server/crud/proxy';
+import { authRouter } from '@server/auth/router';
+import { csrfGuard } from '@server/auth/csrf';
 
 /** Router único del BFF. server.ts solo lo monta bajo el prefijo. */
 export const bff = Router();
@@ -13,7 +15,9 @@ bff.use((_req, res, next) => {
 // 2. Body sin parsear (Buffer): se reenvía tal cual, sea del tipo que sea.
 bff.use(express.raw({ type: () => true, limit: '5mb' }));
 
-// 3. Paso 1 (AUTH): aquí se montará el router de auth, ANTES del CRUD.
+// 3. CSRF y AUTH, siempre ANTES del CRUD.
+bff.use(csrfGuard);
+bff.use(authRouter);
 
 // 4. CRUD genérico.
 bff.use(crudProxy);

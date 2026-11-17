@@ -3,9 +3,13 @@ import { AuthGoogleComponent } from '@features/auth/components/auth-google-compo
 import { AuthGithubComponent } from '@features/auth/components/auth-github-component/auth-github-component';
 import { AuthAppleComponent } from '@features/auth/components/auth-apple-component/auth-apple-component';
 import { AuthLoginComponent } from '@features/auth/components/auth-login-component/auth-login-component';
-import { AuthService } from '@core/services/auth-service';
 import { ErrorService } from '@core/services/error-service';
 import { ToastService } from '@core/services/toast-service';
+import { AuthGoogleService } from '@features/auth/services/auth-google-service';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '@features/auth/services/auth-service';
+import { Router } from '@angular/router';
+import { ROUTES_CONSTANTS } from '@shared/constants/routes-constant';
 
 type AuthProvider = 'google' | 'github' | 'apple' | 'credentials';
 
@@ -15,6 +19,8 @@ type AuthProvider = 'google' | 'github' | 'apple' | 'credentials';
   templateUrl: './auth-page.html',
 })
 export class AuthPage {
+  private readonly router = inject(Router);
+  private readonly authGoogleService = inject(AuthGoogleService);
   private readonly authService = inject(AuthService);
   private readonly errorService = inject(ErrorService);
   private readonly toastService = inject(ToastService);
@@ -26,19 +32,24 @@ export class AuthPage {
     return this.busy() === provider;
   }
 
-  protected loginGoogle(): Promise<void> {
-    return this.run('google', () => this.authService.loginWithGoogle());
+  protected async loginGoogle(): Promise<void> {
+    //return this.run('google', () => this.authGoogleService.loginWithGoogle());
+    return this.run('google', async () => {
+      const googleToken = await this.authGoogleService.getAccessToken();
+      await firstValueFrom(this.authService.loginGoogle({ googleToken }));
+      await this.router.navigateByUrl(ROUTES_CONSTANTS.ADMIN.DASHBOARD);
+    });
   }
 
-  protected loginGitHub(): Promise<void> {
+  protected async loginGitHub(): Promise<void> {
     return this.run('github');
   }
 
-  protected loginApple(): Promise<void> {
+  protected async loginApple(): Promise<void> {
     return this.run('apple');
   }
 
-  protected loginAuth(): Promise<void> {
+  protected async loginAuth(): Promise<void> {
     return this.run('credentials');
   }
 

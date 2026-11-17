@@ -6,6 +6,14 @@ export class ApiService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = '/ssr-api';
 
+  get<TResponse>(endpoint: string) {
+    return this.http.get<TResponse>(`${this.baseUrl}/${endpoint}`);
+  }
+
+  post<TResponse>(endpoint: string) {
+    return this.http.post<TResponse>(`${this.baseUrl}/${endpoint}`, {});
+  }
+
   getAll<TResponse>(endpoint: string) {
     return this.http.get<TResponse>(`${this.baseUrl}/${endpoint}`);
   }

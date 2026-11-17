@@ -14,7 +14,13 @@
 
       <div class="px-4">Panel de Control</div>
 
-      <app-auth-google-component/>
+      @if (userProfile.isLoading()) {
+        <p class="text-base-content/70">Cargando tu perfil…</p>
+      } @else if (userProfile.error()) {
+        <p class="text-error">No se pudo cargar tu perfil.</p>
+      } @else {
+        <app-user-details-component [userProfile]="userProfile.value()!" (logout)="logout()" />
+      }
     </nav>
 
     <!-- Page content here -->

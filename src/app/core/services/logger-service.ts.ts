@@ -2,7 +2,7 @@ import { Service } from '@angular/core';
 import { environment } from '@environments/environment';
 
 @Service()
-export class LoggerServiceTs {
+export class LoggerService {
   error(context: string, message: string, error?: unknown): void {
     if (environment.production) return;
     console.error(`[${context}] ${message}`, error);

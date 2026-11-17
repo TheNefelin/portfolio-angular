@@ -13,15 +13,15 @@
     </div>
   </div>
 
-  <ul class="menu dropdown-content bg-base-300 rounded-box z-10 mt-3 p-2 shadow-xl">
+  <ul class="menu dropdown-content bg-base-300 text-gray-600 rounded-box z-10 mt-3 p-2 shadow-xl">
     <li class="menu-title text-sm font-bold">Hola, {{ displayName() }}</li>
-    <li><span class="text-sm">{{ profile().email ?? '—' }}</span></li>
-    <li><span class="text-sm">rol: {{ profile().role ?? 'Sin Roll' }} - auth: {{ profile().provider ?? 'Sin Proveedor' }}</span></li>
+    <li><span class="text-sm">{{ userProfile().email ?? '—' }}</span></li>
+    <li><span class="text-sm">rol: {{ userProfile().role ?? 'Sin Roll' }} - auth: {{ userProfile().provider ?? 'Sin Proveedor' }}</span></li>
 
     <li class="menu-title"><hr/></li>
 
-    <li><a class="text-sm" routerLink="/">⚙️ Inicio</a></li>
-    <li><a class="text-sm" routerLink="/">⚙️ Panel</a></li>
+    <li><a class="text-sm" [routerLink]="routes.HOME">⚙️ Inicio</a></li>
+    <li><a class="text-sm" [routerLink]="routes.ADMIN.DASHBOARD">⚙️ Panel</a></li>
 
     <li class="menu-title"><hr/></li>
 
