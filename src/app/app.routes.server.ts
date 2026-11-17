@@ -6,6 +6,6 @@ export const serverRoutes: ServerRoute[] = [
   // Admin: privado, sin SEO. Se renderiza en el navegador.
   { path: 'admin', renderMode: RenderMode.Client },
   { path: 'admin/**', renderMode: RenderMode.Client },
-  // Resto (auth, forbidden, 404): estático.
-  { path: '**', renderMode: RenderMode.Prerender },
+  // Cualquier otra URL: renderiza NotFoundPage y responde 404 real.
+  { path: '**', renderMode: RenderMode.Server, status: 404 },
 ];
