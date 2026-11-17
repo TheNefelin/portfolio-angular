@@ -2,6 +2,7 @@ import express, { Router, type ErrorRequestHandler } from 'express';
 import { crudProxy } from '@server/crud/proxy';
 import { authRouter } from '@server/auth/router';
 import { csrfGuard } from '@server/auth/csrf';
+import { authLimiter, readLimiter, writeLimiter } from '@server/middleware/rate-limit';
 
 /** Router único del BFF. server.ts solo lo monta bajo el prefijo. */
 export const bff = Router();
@@ -11,6 +12,11 @@ bff.use((_req, res, next) => {
   res.setHeader('Cache-Control', 'no-store');
   next();
 });
+
+// 1b. Rate limiting (ver las limitaciones en middleware/rate-limit.ts).
+bff.use(readLimiter);
+bff.use(writeLimiter);
+bff.use(authLimiter);
 
 // 2. Body sin parsear (Buffer): se reenvía tal cual, sea del tipo que sea.
 bff.use(express.raw({ type: () => true, limit: '5mb' }));
