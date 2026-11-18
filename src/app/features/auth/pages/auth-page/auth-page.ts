@@ -5,9 +5,9 @@ import { AuthAppleComponent } from '@features/auth/components/auth-apple-compone
 import { AuthLoginComponent } from '@features/auth/components/auth-login-component/auth-login-component';
 import { ErrorService } from '@core/services/error-service';
 import { ToastService } from '@core/services/toast-service';
-import { AuthGoogleService } from '@features/auth/services/auth-google-service';
+import { AuthGoogleService } from '@core/services/auth-google-service';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from '@features/auth/services/auth-service';
+import { AuthService } from '@core/services/auth-service';
 import { Router } from '@angular/router';
 import { ROUTES_CONSTANTS } from '@shared/constants/routes-constant';
 import { SessionService } from '@core/services/session-service';

@@ -8,7 +8,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, of, take } from 'rxjs';
 import { ButtonBackToTopComponent } from '@shared/components/button-back-to-top-component/button-back-to-top-component';
 import { UserDetailsComponent } from '@features/auth/components/user-details-component/user-details-component';
-import { AuthService } from '@features/auth/services/auth-service';
+import { AuthService } from '@core/services/auth-service';
 import { SessionService } from '@core/services/session-service';
 
 @Component({

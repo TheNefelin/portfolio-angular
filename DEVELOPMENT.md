@@ -12,7 +12,7 @@
 | Layouts | `src/app/layouts/` (main, admin) | al cambiar el shell |
 | HOME | `src/app/features/home/` | al ajustar secciones del inicio |
 | Admin y CRUD | `src/app/features/{dashboard,url-grp,url,language,technology,project}/` | al tocar listados o formularios |
-| Auth y guard | `src/app/features/auth/services/{auth-service,auth-google-service}.ts`, `src/app/core/guards/auth-guard.ts`, `src/app/core/services/session-service.ts` | al cablear el login o proteger rutas |
+| Auth y guard | `src/app/core/services/{auth-service,auth-google-service,session-service}.ts`, `src/app/core/models/auth-profile.ts`, `src/app/core/guards/auth-guard.ts` | al cablear el login o proteger rutas |
 | API y BFF | `src/app/core/services/api-service.ts`, `src/server.ts`, `src/server/bff.ts`, `src/server/auth/*`, `src/server/crud/proxy.ts` | al cambiar rutas, métodos o el proxy |
 | Feedback | `src/app/core/services/{error,toast,confirm,mutation}-service.ts`, `src/app/shared/components/{modal-error,modal-confirm,toast}-component/` | al cambiar mensajes o modales |
 | Listados, UI y navegación | `src/app/shared/base/crud-page.ts`, `src/app/shared/components/`, `src/app/shared/constants/routes-constant.ts` | al cambiar paginación, filtro o navegación |
@@ -26,7 +26,7 @@
 - `ApiService` llama a `/ssr-api/{ruta}` **sin** `/api`: `API_URL` ya termina en `/api` y el BFF concatena. `src/server.ts` agrega `X-API-Key` y reenvía status y JSON.
 - Feedback: `errorInterceptor` → `ErrorService` → `modal-error`; `ConfirmService` (promesa) → `modal-confirm`; `MutationService` → `ToastService` → `toast`. Se montan una vez en `app.html`.
 - CRUD: `url-grp`, `url`, `language` y `technology` usan modal; `project` usa `/admin/project/form` y `/admin/project/form/:id`.
-- Auth: `AuthPage` cablea solo Google; GitHub, Apple y email avisan «Disponible próximamente». `AuthService` (en `features/auth/services/`) usa `ApiService` y devuelve `Observable`; la sesión vive en **cookies HttpOnly** emitidas por el BFF, con CSRF y rate limiting. `loginGoogle` obtiene el token de Google vía GIS y llama `/ssr-api/auth/google`; el BFF setea la cookie y devuelve el body sin los tokens. `SessionService` cachea el perfil en un signal; `authGuard` protege `/admin` (redirige a `/auth`).
+- Auth: `AuthPage` cablea solo Google; GitHub, Apple y email avisan «Disponible próximamente». `AuthService` (en `core/services/`) usa `ApiService` y devuelve `Observable`; la sesión vive en **cookies HttpOnly** emitidas por el BFF, con CSRF y rate limiting. `loginGoogle` obtiene el token de Google vía GIS y llama `/ssr-api/auth/google`; el BFF setea la cookie y devuelve el body sin los tokens. `SessionService` (en `core/services/`) cachea el perfil en un signal; `authGuard` (en `core/guards/`) protege `/admin` (redirige a `/auth` sin sesión o a `/forbidden` si el rol no es admin).
 
 ## Decisiones
 

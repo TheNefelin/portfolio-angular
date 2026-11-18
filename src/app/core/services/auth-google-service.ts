@@ -2,7 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID, Service } from '@angular/core';
 import { LoggerService } from '@core/services/logger-service.ts';
 import { environment } from '@environments/environment';
-import { GoogleAccounts } from '@features/auth/models/auth-profile';
+import { GoogleAccounts } from '@core/models/auth-profile';
 
 const GIS_SCRIPT_URL = 'https://accounts.google.com/gsi/client';
 const GIS_LOAD_TIMEOUT_MS = 10000;

@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { ApiAuthGoogleRequest, ApiAuthLoginRequest, ApiAuthRegisterRequest, RegisterForm, UserProfile } from '@features/auth/models/auth-profile';
+import { ApiAuthGoogleRequest, ApiAuthLoginRequest, ApiAuthRegisterRequest, RegisterForm, UserProfile } from '@core/models/auth-profile';
 import { ApiService } from '@core/services/api-service';
 
 @Service()

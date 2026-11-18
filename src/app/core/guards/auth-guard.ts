@@ -9,6 +9,7 @@ export const authGuard: CanActivateFn = () => {
   // En el servidor no hay cookies del usuario: no se decide nada ahí.
   if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
   const router = inject(Router);
+  
   return inject(SessionService).getUser().pipe(
     map((user) => {
       if (!user) return router.createUrlTree([ROUTES_CONSTANTS.AUTH]);

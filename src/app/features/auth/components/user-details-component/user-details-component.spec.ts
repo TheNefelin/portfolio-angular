@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { UserDetailsComponent } from './user-details-component';
-import { UserProfile } from '@features/auth/models/auth-profile';
+import { UserProfile } from '@core/models/auth-profile';
 
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;

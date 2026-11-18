@@ -1,7 +1,7 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { UserProfile } from '@features/auth/models/auth-profile';
+import { UserProfile } from '@core/models/auth-profile';
 import { ROUTES_CONSTANTS } from '@shared/constants/routes-constant';
 
 @Component({
