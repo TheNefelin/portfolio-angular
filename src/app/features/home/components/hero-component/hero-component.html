@@ -3,9 +3,10 @@
     <div class="avatar">
       <div class="w-48 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
         <img 
-          ngSrc="/images/hero_dev.jpg" 
+          [ngSrc]="'images/hero_dev.jpg'" 
           width="192" height="192" 
           alt="francisco image"
+          priority
           />
       </div>
     </div>
@@ -16,7 +17,7 @@
         <a class="avatar flex items-center gap-2 hover:text-red-400 transition duration-300" href="https://www.linkedin.com/in/nefelin" target="_blank">
           <div class="w-8">
             <img 
-              ngSrc="/images/hero_linkedin.png"
+              [ngSrc]="'images/hero_linkedin.png'"
               alt="linkedin image" 
               width="32" height="32" 
               priority />
@@ -26,7 +27,7 @@
         <a class="avatar flex items-center gap-2 hover:text-red-400 transition duration-300" href="https://github.com/TheNefelin" target="_blank">
           <div class="w-8">
             <img 
-              ngSrc="/images/hero_github.png" 
+              [ngSrc]="'images/hero_github.png'" 
               alt="github image"
               width="32" height="32"
               priority />

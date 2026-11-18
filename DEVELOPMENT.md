@@ -12,7 +12,7 @@
 | Layouts | `src/app/layouts/` (main, admin) | al cambiar el shell |
 | HOME | `src/app/features/home/` | al ajustar secciones del inicio |
 | Admin y CRUD | `src/app/features/{dashboard,url-grp,url,language,technology,project}/` | al tocar listados o formularios |
-| Auth | `src/app/features/auth/services/{auth-service,auth-google-service}.ts`, `src/app/features/auth/` | al cablear el login |
+| Auth y guard | `src/app/features/auth/services/{auth-service,auth-google-service}.ts`, `src/app/core/guards/auth-guard.ts`, `src/app/core/services/session-service.ts` | al cablear el login o proteger rutas |
 | API y BFF | `src/app/core/services/api-service.ts`, `src/server.ts`, `src/server/bff.ts`, `src/server/auth/*`, `src/server/crud/proxy.ts` | al cambiar rutas, métodos o el proxy |
 | Feedback | `src/app/core/services/{error,toast,confirm,mutation}-service.ts`, `src/app/shared/components/{modal-error,modal-confirm,toast}-component/` | al cambiar mensajes o modales |
 | Listados, UI y navegación | `src/app/shared/base/crud-page.ts`, `src/app/shared/components/`, `src/app/shared/constants/routes-constant.ts` | al cambiar paginación, filtro o navegación |
@@ -26,7 +26,7 @@
 - `ApiService` llama a `/ssr-api/{ruta}` **sin** `/api`: `API_URL` ya termina en `/api` y el BFF concatena. `src/server.ts` agrega `X-API-Key` y reenvía status y JSON.
 - Feedback: `errorInterceptor` → `ErrorService` → `modal-error`; `ConfirmService` (promesa) → `modal-confirm`; `MutationService` → `ToastService` → `toast`. Se montan una vez en `app.html`.
 - CRUD: `url-grp`, `url`, `language` y `technology` usan modal; `project` usa `/admin/project/form` y `/admin/project/form/:id`.
-- Auth: `AuthPage` cablea solo Google; GitHub, Apple y email avisan «Disponible próximamente». `AuthService` (en `features/auth/services/`) usa `ApiService` y devuelve `Observable`; la sesión vive en **cookies HttpOnly** emitidas por el BFF, con CSRF (`withXsrfConfiguration`) y rate limiting. `loginGoogle` obtiene el token de Google vía GIS y llama `/ssr-api/auth/google`; el BFF setea la cookie y devuelve el body sin los tokens. `/admin` sigue sin guard.
+- Auth: `AuthPage` cablea solo Google; GitHub, Apple y email avisan «Disponible próximamente». `AuthService` (en `features/auth/services/`) usa `ApiService` y devuelve `Observable`; la sesión vive en **cookies HttpOnly** emitidas por el BFF, con CSRF y rate limiting. `loginGoogle` obtiene el token de Google vía GIS y llama `/ssr-api/auth/google`; el BFF setea la cookie y devuelve el body sin los tokens. `SessionService` cachea el perfil en un signal; `authGuard` protege `/admin` (redirige a `/auth`).
 
 ## Decisiones
 
@@ -46,7 +46,6 @@
 
 ## Pendientes
 
-- **Guard de `/admin`:** no existe; el admin sigue abierto.
 - **Multipart en el BFF:** `image-picker` y `uploadImage` de project, language y technology hoy mandan `{}`.
 - `TitleComponent` no declara el input `id`: las anclas del navbar no llegan a su sección.
 - `FooterComponent` importa un modelo desde `url-grp`: dependencia invertida.
@@ -61,5 +60,5 @@
 
 ## Estado
 
-- `pnpm test --watch=false`: 53 archivos, 62/62 (verificado el 2026-11-18).
-- `pnpm build` OK, 7 rutas prerenderizadas; `pnpm lint` limpio (verificado el 2026-11-18).
+- `pnpm test --watch=false`: 56 archivos, 61/62 (1 fallo: `user-details-component`, NG0201 por `routerLink` sin importar `RouterLink`); `pnpm lint` limpio (verificado el 2026-11-18).
+- `pnpm build` OK, 1 ruta prerenderizada; `pnpm lint` limpio (verificado el 2026-11-18).

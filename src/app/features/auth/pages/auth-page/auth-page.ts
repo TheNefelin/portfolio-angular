@@ -10,6 +10,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '@features/auth/services/auth-service';
 import { Router } from '@angular/router';
 import { ROUTES_CONSTANTS } from '@shared/constants/routes-constant';
+import { SessionService } from '@core/services/session-service';
 
 type AuthProvider = 'google' | 'github' | 'apple' | 'credentials';
 
@@ -20,6 +21,8 @@ type AuthProvider = 'google' | 'github' | 'apple' | 'credentials';
 })
 export class AuthPage {
   private readonly router = inject(Router);
+
+  private readonly session = inject(SessionService);
   private readonly authGoogleService = inject(AuthGoogleService);
   private readonly authService = inject(AuthService);
   private readonly errorService = inject(ErrorService);
@@ -33,10 +36,14 @@ export class AuthPage {
   }
 
   protected async loginGoogle(): Promise<void> {
-    //return this.run('google', () => this.authGoogleService.loginWithGoogle());
     return this.run('google', async () => {
       const googleToken = await this.authGoogleService.getAccessToken();
       await firstValueFrom(this.authService.loginGoogle({ googleToken }));
+  
+      // Vuelve a preguntar al servidor: sin esto el guard sigue creyendo que no hay sesión.
+      const user = await firstValueFrom(this.session.check(true));
+      if (!user) throw new Error('No se pudo iniciar sesión');
+  
       await this.router.navigateByUrl(ROUTES_CONSTANTS.ADMIN.DASHBOARD);
     });
   }

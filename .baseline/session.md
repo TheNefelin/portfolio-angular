@@ -5,7 +5,7 @@
 
 ## Tarea activa
 
-El contrato de auth está alineado (cookies HttpOnly en el BFF). El siguiente trabajo de backend es tests de auth; en el frontend, el guard de `/admin`.
+Guard de `/admin` implementado (`authGuard` + `SessionService`). Pendiente: multipart en el BFF y corrección del spec de `user-details-component` (NG0201 por `routerLink`).
 
 ## Último avance comprobado
 
