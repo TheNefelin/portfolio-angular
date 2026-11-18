@@ -46,7 +46,7 @@ Thumbs.db
 # Environment
 .env
 .env.*
-!.env.demo
+!.env.example
 
 # agent-baseline: respaldos de instalacion
 .baseline-backup/
