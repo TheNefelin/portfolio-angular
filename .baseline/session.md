@@ -5,7 +5,7 @@
 
 ## Tarea activa
 
-Guard de `/admin` implementado (`authGuard` + `SessionService`, redirige a `/auth` sin sesión y a `/forbidden` si el rol no es admin). Spec de `user-details-component` corregido (provideRouter + input `userProfile`). Pendiente: multipart en el BFF.
+Guard de `/admin` implementado (`authGuard` + `SessionService`). El admin layout usa `SessionService.getUser()` (una sola petición cacheada) en vez de `AuthService.me()` directo; `logout()` limpia el cache. Spec de `user-details-component` corregido (provideRouter + input `userProfile`). Pendiente: multipart en el BFF.
 
 ## Último avance comprobado
 

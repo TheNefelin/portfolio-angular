@@ -19,7 +19,7 @@ import { ProjectFormComponent } from '@features/project/components/project-form-
   templateUrl: './project-form-page.html',
 })
 export class ProjectFormPage {
-  // SERVICES ---------------------------------------------------------------  
+  // SERVICES ---------------------------------------------------------------
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly toastService = inject(ToastService);
@@ -103,7 +103,7 @@ export class ProjectFormPage {
     this.router.navigate([ROUTES_CONSTANTS.ADMIN.PROJECT.ROOT]);
   }
 
-  // CRUD -------------------------------------------------------------------  
+  // CRUD -------------------------------------------------------------------
   protected onDeleteImage(): void {
     const id = this.getProjectByIdPayload();
     if (!id) return;

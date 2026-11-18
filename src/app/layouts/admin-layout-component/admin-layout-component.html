@@ -16,7 +16,7 @@
 
       @if (userProfile.isLoading()) {
         <p class="text-base-content/70">Cargando tu perfil…</p>
-      } @else if (userProfile.error()) {
+      } @else if (userProfile.error() || !userProfile.value()) {
         <p class="text-error">No se pudo cargar tu perfil.</p>
       } @else {
         <app-user-details-component [userProfile]="userProfile.value()!" (logout)="logout()" />

@@ -41,7 +41,7 @@ export class AuthPage {
       await firstValueFrom(this.authService.loginGoogle({ googleToken }));
   
       // Vuelve a preguntar al servidor: sin esto el guard sigue creyendo que no hay sesión.
-      const user = await firstValueFrom(this.session.check(true));
+      const user = await firstValueFrom(this.session.getUser(true));
       if (!user) throw new Error('No se pudo iniciar sesión');
   
       await this.router.navigateByUrl(ROUTES_CONSTANTS.ADMIN.DASHBOARD);
