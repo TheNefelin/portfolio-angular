@@ -108,8 +108,8 @@ function envInt(name: string, fallback: number): number {
 /**
  * Valores configurables por entorno (todos opcionales):
  *   RATE_LIMIT_WINDOW_SEC   ventana en segundos                              (por defecto 60)
- *   RATE_LIMIT_READ_MAX     todos los GET/HEAD, incluido GET /auth/me        (por defecto 100)
- *   RATE_LIMIT_WRITE_MAX    POST/PUT/PATCH/DELETE fuera de /auth             (por defecto 25)
+ *   RATE_LIMIT_READ_MAX     todos los GET/HEAD, incluido GET /auth/me        (por defecto 50)
+ *   RATE_LIMIT_WRITE_MAX    POST/PUT/PATCH/DELETE fuera de /auth             (por defecto 10)
  *   RATE_LIMIT_AUTH_MAX     POST/PUT/PATCH/DELETE bajo /auth/*               (por defecto 5)
  *
  * Se leen una sola vez, al arrancar: cambiarlos exige reiniciar o volver a desplegar.
@@ -123,7 +123,7 @@ const isAuth = (req: Request) => req.path === '/auth' || req.path.startsWith('/a
 export const readLimiter = rateLimit({
   name: 'read',
   windowMs,
-  max: envInt('RATE_LIMIT_READ_MAX', 100),
+  max: envInt('RATE_LIMIT_READ_MAX', 50),
   skip: (req) => !isRead(req),
 });
 
@@ -131,7 +131,7 @@ export const readLimiter = rateLimit({
 export const writeLimiter = rateLimit({
   name: 'write',
   windowMs,
-  max: envInt('RATE_LIMIT_WRITE_MAX', 25),
+  max: envInt('RATE_LIMIT_WRITE_MAX', 10),
   skip: (req) => isRead(req) || req.method === 'OPTIONS' || isAuth(req),
 });
 
