@@ -12,8 +12,8 @@
 | Layouts | `src/app/layouts/` (main, admin) | al cambiar el shell |
 | HOME | `src/app/features/home/` | al ajustar secciones del inicio |
 | Admin y CRUD | `src/app/features/{dashboard,url-grp,url,language,technology,project}/` | al tocar listados o formularios |
-| Auth | `src/app/core/services/auth-service.ts`, `src/app/core/interceptors/auth-interceptor.ts`, `src/app/features/auth/` | al cablear el login |
-| API y BFF | `src/app/core/services/api-service.ts`, `src/server.ts`, `src/server/proxy/api-proxy.ts` | al cambiar rutas, métodos o el proxy |
+| Auth | `src/app/features/auth/services/{auth-service,auth-google-service}.ts`, `src/app/features/auth/` | al cablear el login |
+| API y BFF | `src/app/core/services/api-service.ts`, `src/server.ts`, `src/server/bff.ts`, `src/server/auth/*`, `src/server/crud/proxy.ts` | al cambiar rutas, métodos o el proxy |
 | Feedback | `src/app/core/services/{error,toast,confirm,mutation}-service.ts`, `src/app/shared/components/{modal-error,modal-confirm,toast}-component/` | al cambiar mensajes o modales |
 | Listados, UI y navegación | `src/app/shared/base/crud-page.ts`, `src/app/shared/components/`, `src/app/shared/constants/routes-constant.ts` | al cambiar paginación, filtro o navegación |
 | Config | `angular.json`, `tsconfig.json`, `eslint.config.js`, `src/environments/environment.ts`, `.env.example` | al cambiar build, paths, lint o entorno |
@@ -26,7 +26,7 @@
 - `ApiService` llama a `/ssr-api/{ruta}` **sin** `/api`: `API_URL` ya termina en `/api` y el BFF concatena. `src/server.ts` agrega `X-API-Key` y reenvía status y JSON.
 - Feedback: `errorInterceptor` → `ErrorService` → `modal-error`; `ConfirmService` (promesa) → `modal-confirm`; `MutationService` → `ToastService` → `toast`. Se montan una vez en `app.html`.
 - CRUD: `url-grp`, `url`, `language` y `technology` usan modal; `project` usa `/admin/project/form` y `/admin/project/form/:id`.
-- Auth: `AuthPage` cablea solo Google; GitHub, Apple y email avisan «Disponible próximamente». `AuthService` llama `/ssr-api/auth/{google,refresh,logout}` y guarda `{token, refresh_token, user}` en `sessionStorage`; `authInterceptor` refresca en 401. `/admin` sigue sin guard.
+- Auth: `AuthPage` cablea solo Google; GitHub, Apple y email avisan «Disponible próximamente». `AuthService` (en `features/auth/services/`) usa `ApiService` y devuelve `Observable`; la sesión vive en **cookies HttpOnly** emitidas por el BFF, con CSRF (`withXsrfConfiguration`) y rate limiting. `loginGoogle` obtiene el token de Google vía GIS y llama `/ssr-api/auth/google`; el BFF setea la cookie y devuelve el body sin los tokens. `/admin` sigue sin guard.
 
 ## Decisiones
 
@@ -42,12 +42,10 @@
 | Aceptado | `project` con página de formulario; el resto en modal. | Tiene selects y subida de imagen. |
 | Aceptado | Se mantienen las dos URLs de privacy policy: `/privacy-policy/navaja-suiza` y `/navaja-suiza/privacy-policy`. | Ambas publicadas y con enlaces externos. |
 | Aceptado | Client ID de Google en `environment.ts`, no en el BFF. | Es público por diseño; la API valida `aud` contra `GOOGLE_CLIENT_ID`. |
-| Pendiente | Sesión en `sessionStorage` vs cookie `httpOnly`. | Cualquier XSS lee los tokens. |
+| Aceptado | Sesión en cookies HttpOnly emitidas por el BFF, con CSRF y rate limiting. | Los tokens no llegan al bundle del navegador; el BFF los gestiona. |
 
 ## Pendientes
 
-- **Contrato de auth desalineado con `portfolio-python`** (bloquea el login): la API devuelve `{access_token, refresh_token, token_type, expires_in}` y `AuthService` lee `{token, refresh_token, user}` → `token` queda `undefined`; la API no devuelve `user` y el front espera `id_user`/`picture`; el `logout` del front manda `{refresh_token}` y la API exige `Bearer`.
-- **`authInterceptor` nunca adjunta el token:** filtra por `/ssr-api/api/`, pero `ApiService` llama `/ssr-api/{ruta}`.
 - **Guard de `/admin`:** no existe; el admin sigue abierto.
 - **Multipart en el BFF:** `image-picker` y `uploadImage` de project, language y technology hoy mandan `{}`.
 - `TitleComponent` no declara el input `id`: las anclas del navbar no llegan a su sección.
@@ -59,9 +57,9 @@
 ## Seguridad
 
 - `.env` está en `.gitignore` y nunca se versionó; `.env.example` es la plantilla. La API key solo existe en el proceso del servidor, nunca en el bundle del navegador.
-- Los tokens de auth viven en `sessionStorage`: cualquier XSS los lee. La alternativa es cookie `httpOnly` emitida por el BFF.
+- La sesión de auth vive en cookies HttpOnly emitidas por el BFF (`access_token`, `refresh_token`, `csrf_token`); el front no accede a los tokens. El BFF renueva la sesión automáticamente en el crudProxy cuando la API responde 401.
 
 ## Estado
 
-- `pnpm test --watch=false`: 52 archivos, 61/61 (verificado el 2026-11-15).
-- `pnpm build` OK, 7 rutas prerenderizadas; `pnpm lint` limpio (última corrida registrada).
+- `pnpm test --watch=false`: 53 archivos, 62/62 (verificado el 2026-11-18).
+- `pnpm build` OK, 7 rutas prerenderizadas; `pnpm lint` limpio (verificado el 2026-11-18).
