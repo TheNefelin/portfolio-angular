@@ -10,6 +10,10 @@ export const authGuard: CanActivateFn = () => {
   if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
   const router = inject(Router);
   return inject(SessionService).check().pipe(
-    map((user) => (user ? true : router.createUrlTree([ROUTES_CONSTANTS.AUTH]))),
+    map((user) => {
+      if (!user) return router.createUrlTree([ROUTES_CONSTANTS.AUTH]);
+      if (user.role !== 'admin') return router.createUrlTree([ROUTES_CONSTANTS.FORBIDDEN]);
+      return true;
+    }),
   );
 };

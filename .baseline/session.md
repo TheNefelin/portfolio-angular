@@ -5,7 +5,7 @@
 
 ## Tarea activa
 
-Guard de `/admin` implementado (`authGuard` + `SessionService`). Pendiente: multipart en el BFF y corrección del spec de `user-details-component` (NG0201 por `routerLink`).
+Guard de `/admin` implementado (`authGuard` + `SessionService`, redirige a `/auth` sin sesión y a `/forbidden` si el rol no es admin). Spec de `user-details-component` corregido (provideRouter + input `userProfile`). Pendiente: multipart en el BFF.
 
 ## Último avance comprobado
 

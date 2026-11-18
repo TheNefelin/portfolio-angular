@@ -60,5 +60,5 @@
 
 ## Estado
 
-- `pnpm test --watch=false`: 56 archivos, 61/62 (1 fallo: `user-details-component`, NG0201 por `routerLink` sin importar `RouterLink`); `pnpm lint` limpio (verificado el 2026-11-18).
+- `pnpm test --watch=false`: 56 archivos, 61/61 (verificado el 2026-11-18).
 - `pnpm build` OK, 1 ruta prerenderizada; `pnpm lint` limpio (verificado el 2026-11-18).
