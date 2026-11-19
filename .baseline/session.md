@@ -5,7 +5,7 @@
 
 ## Tarea activa
 
-Guard de `/admin` implementado (`authGuard` + `SessionService`). El admin layout usa `SessionService.getUser()` (una sola petición cacheada) en vez de `AuthService.me()` directo; `logout()` limpia el cache. Spec de `user-details-component` corregido (provideRouter + input `userProfile`). Se añadieron rutas de servidor para `/auth`, `/forbidden`, `/privacy-policy` y `/navaja-suiza/privacy-policy` (antes devolvían 404 por caer en `**`). Pendiente: multipart en el BFF.
+Guard de `/admin` implementado. Admin layout usa `SessionService.getUser()` cacheado. Footer simplificado (sin dependencia de url-grp; los enlaces viven en `LibraryPage`). LibraryPage creada con diseño de estante de libros (vertical, cuero negro, dorado) usando `computedUrlGrpDetailList()`. ConsoleComponent revertido a original (se revisará después). Pendiente: multipart en el BFF.
 
 ## Último avance comprobado
 

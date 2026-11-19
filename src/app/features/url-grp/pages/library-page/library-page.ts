@@ -3,9 +3,10 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { UrlGrpDetailModel } from '@features/url-grp/models/url-grp-model';
 import { UrlGrpService } from '@features/url-grp/services/url-grp-service';
 import { catchError, of } from 'rxjs';
+import { LoadingComponent } from '@shared/components/loading-component/loading-component';
 
 @Component({
-  imports: [],
+  imports: [LoadingComponent],
   selector: 'app-library-page',
   templateUrl: './library-page.html',
 })

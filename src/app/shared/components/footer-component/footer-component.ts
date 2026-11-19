@@ -1,12 +1,10 @@
-import { Component, input } from '@angular/core';
-import { UrlGrpDetailModel } from '../../../features/url-grp/models/url-grp-model';
+import { Component } from '@angular/core';
 
 @Component({
   imports: [],
   selector: 'app-footer-component',
   templateUrl: './footer-component.html',
 })
-export class FooterComponent {
-  readonly urlGrpDetailList = input<UrlGrpDetailModel[]>([]); 
+export class FooterComponent { 
   protected readonly getYear = new Date().getFullYear();
 }

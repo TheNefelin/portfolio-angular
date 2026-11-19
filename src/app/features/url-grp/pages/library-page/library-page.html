@@ -1,27 +1,41 @@
 <!-- Biblioteca de enlaces: cada grupo es un estante, cada url es un libro vertical -->
-<section class="min-h-screen bg-[#17110d] px-4 py-10"
-  style="background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.22) 0 2px, transparent 2px 140px), radial-gradient(ellipse at 50% 0%, #2d2018 0%, #17110d 62%);">
-  <div class="mx-auto flex max-w-6xl flex-col items-center gap-7">
+<section class="min-h-screen p-5 bg-gray-900">
+  <div class="relative inline-flex items-center justify-center w-60 h-10 transition-all duration-250 hover:-translate-y-3">
+    <a
+      [href]="'/'"
+      rel="noopener noreferrer"
+      [title]="'Home'"
+      class="group absolute flex h-60 w-10 flex-col items-center justify-between rounded-t-sm px-1 py-2 shadow-md transition-all duration-250 hover:shadow-xl"
+      style="top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg); background-color: #121110; background-image: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(255,255,255,0.11) 24%, rgba(255,255,255,0.03) 52%, rgba(0,0,0,0.5) 100%), radial-gradient(rgba(255,255,255,0.07) 0.7px, transparent 1.3px), radial-gradient(rgba(0,0,0,0.45) 0.8px, transparent 1.4px); background-size: 100% 100%, 3px 3px, 5px 4px; background-position: 0 0, 0 0, 1px 2px; box-shadow: 2px 0 5px rgba(0,0,0,0.55), inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -3px 0 rgba(0,0,0,0.55);"
+    >
+      <div class="flex w-full flex-col items-center gap-[3px]">
+        <div class="h-[2px] w-[68%] rounded bg-[#d4af5a]/85"></div>
+        <div class="h-[2px] w-[68%] rounded bg-[#d4af5a]/85"></div>
+      </div>
+      <span class="my-[10px] min-h-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-center font-bold leading-none tracking-[0.06em] text-[#d4af5a]" style="writing-mode: vertical-rl; text-shadow: 0 1px 0 rgba(0,0,0,0.7);">
+        {{ 'Home' }}
+      </span>
+      <div class="flex w-full flex-col items-center gap-[5px]">
+        <div class="h-[6px] w-[6px] rotate-45 bg-[#d4af5a]/85"></div>
+        <div class="h-[2px] w-[68%] rounded bg-[#d4af5a]/85"></div>
+      </div>
+    </a>
+  </div>  
 
-    <!-- Título -->
-    <h1 class="text-center font-bold tracking-[0.14em] text-[#d4af5a] drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]"
-        style="font-family: Georgia, serif; font-size: 44px; line-height: 1.1;">
-      Mi biblioteca
-    </h1>
-
+  <div class="mx-auto flex flex-col items-center">
     @if (computedUrlGrpDetailList().length === 0) {
-      <p class="text-[#e9dcc0]/50">Cargando biblioteca...</p>
+      <app-loading-component class="text-white"/>
     }
 
     @for (group of computedUrlGrpDetailList(); track group.id_urlgrp) {
-      <div class="w-full max-w-[600px]">
-        <h2 class="mb-3 text-center text-lg font-semibold tracking-wider text-[#d4af5a]/80">
+      <div class="w-full bg-gray-800">
+        <h2 class="mb-3 text-center text-lg font-semibold uppercase tracking-wider text-[#d4af5a]/80">
           {{ group.name }}
         </h2>
 
         <!-- Estante -->
-        <div class="relative rounded-lg bg-amber-900/80 px-6 pb-2 pt-4 shadow-xl">
-          <div class="flex items-end gap-1 border-b-4 border-amber-950 pb-1">
+        <div class="relative rounded-lg px-6 pt-1 shadow-xl">
+          <div class="flex flex-wrap-reverse items-end gap-1 border-b-4 border-amber-950 pb-1">
 
             @for (url of group.urls; track url.id_url) {
               <a
@@ -29,14 +43,14 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 [title]="url.name"
-                class="group relative flex h-40 w-10 flex-col items-center justify-between rounded-t-sm px-1 py-2 shadow-md transition-all duration-250 hover:-translate-y-3 hover:shadow-xl"
+                class="group relative flex h-60 w-10 flex-col items-center justify-between rounded-t-sm px-1 py-2 shadow-md transition-all duration-250 hover:-translate-y-3 hover:shadow-xl"
                 style="background-color: #121110; background-image: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(255,255,255,0.11) 24%, rgba(255,255,255,0.03) 52%, rgba(0,0,0,0.5) 100%), radial-gradient(rgba(255,255,255,0.07) 0.7px, transparent 1.3px), radial-gradient(rgba(0,0,0,0.45) 0.8px, transparent 1.4px); background-size: 100% 100%, 3px 3px, 5px 4px; background-position: 0 0, 0 0, 1px 2px; box-shadow: 2px 0 5px rgba(0,0,0,0.55), inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -3px 0 rgba(0,0,0,0.55);"
               >
                 <div class="flex w-full flex-col items-center gap-[3px]">
                   <div class="h-[2px] w-[68%] rounded bg-[#d4af5a]/85"></div>
                   <div class="h-[2px] w-[68%] rounded bg-[#d4af5a]/85"></div>
                 </div>
-                <span class="my-[10px] min-h-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-center text-[11px] font-bold leading-none tracking-[0.06em] text-[#d4af5a]" style="writing-mode: vertical-rl; text-shadow: 0 1px 0 rgba(0,0,0,0.7);">
+                <span class="my-[10px] min-h-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-center  font-bold leading-none tracking-[0.06em] text-[#d4af5a]" style="writing-mode: vertical-rl; text-shadow: 0 1px 0 rgba(0,0,0,0.7);">
                   {{ url.name }}
                 </span>
                 <div class="flex w-full flex-col items-center gap-[5px]">
@@ -50,7 +64,7 @@
 
           </div>
           <!-- Sombra del estante -->
-          <div class="h-3 rounded-b bg-amber-950/40"></div>
+          <div class="h-3 rounded-b bg-amber-900/80"></div>
         </div>
       </div>
     } @empty {
@@ -59,3 +73,14 @@
 
   </div>
 </section>
+
+<footer class="footer bg-gray-900 text-neutral-content p-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+  @for (urlGrp of computedUrlGrpDetailList(); track urlGrp.id_urlgrp) {
+    <nav>
+      <h6 class="footer-title">{{ urlGrp.name }}</h6>
+      @for (url of urlGrp.urls; track url.id_url) {
+        <a class="link link-hover" target="_blank" [href]="url.link">{{ url.name }}</a>
+      }
+    </nav>
+  }
+</footer>

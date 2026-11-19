@@ -30,19 +30,19 @@ export class SocialComponent {
       alt: "LinkedIn",
       color: "bg-cyan-600",
     },
-    {
-      id: 3,
-      url:"https://www.twitch.tv/thenefelin",
-      img: "/images/social_twitch.webp",
-      alt: "Twitch",
-      color: "bg-purple-600",
-    },
-    {
-      id: 4,
-      url:"https://www.youtube.com/c/TheNefelin",
-      img: "/images/social_youtube.webp",
-      alt: "YouTube",
-      color: "bg-red-600",
-    },
+    //{
+    //  id: 3,
+    //  url:"https://www.twitch.tv/thenefelin",
+    //  img: "/images/social_twitch.webp",
+    //  alt: "Twitch",
+    //  color: "bg-purple-600",
+    //},
+    //{
+    //  id: 4,
+    //  url:"https://www.youtube.com/c/TheNefelin",
+    //  img: "/images/social_youtube.webp",
+    //  alt: "YouTube",
+    //  color: "bg-red-600",
+    //},
   ]
 }

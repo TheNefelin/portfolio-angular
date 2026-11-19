@@ -1,14 +1,3 @@
-<footer class="footer bg-gray-900 text-neutral-content p-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-  @for (urlGrp of urlGrpDetailList(); track urlGrp.id_urlgrp) {
-    <nav>
-      <h6 class="footer-title">{{ urlGrp.name }}</h6>
-      @for (url of urlGrp.urls; track url.id_url) {
-        <a class="link link-hover" target="_blank" [href]="url.link">{{ url.name }}</a>
-      }
-    </nav>
-  }
-</footer>
-
 <div class="border-t border-white/5 p-6 text-center bg-black">
   <p class="text-gray-300 text-sm">
     © {{ getYear }} 
