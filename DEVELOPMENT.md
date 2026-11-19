@@ -47,11 +47,8 @@
 ## Pendientes
 
 - **Multipart en el BFF:** `image-picker` y `uploadImage` de project, language y technology hoy mandan `{}`.
-- `TitleComponent` no declara el input `id`: las anclas del navbar no llegan a su sección.
 - ~~`FooterComponent` importa un modelo desde `url-grp`: dependencia invertida.~~ Resuelto: el footer ya no recibe `urlGrpDetailList`; los enlaces viven en la `LibraryPage`.
-- `ConsoleComponent` deja `setTimeout` sin limpieza y un `#scrollAnchor` sin uso.
-- El navbar usa `href` en algunos enlaces; puede recargar y perder estado del router.
-- Definir `NG_ALLOWED_HOSTS` con el dominio real al desplegar.
+- `ConsoleComponent` deja `setTimeout` sin limpieza y un `#scrollAnchor` sin uso (revertido; pendiente de revisión).
 
 ## Seguridad
 

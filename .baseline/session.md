@@ -5,25 +5,25 @@
 
 ## Tarea activa
 
-Guard de `/admin` implementado. Admin layout usa `SessionService.getUser()` cacheado. Footer simplificado (sin dependencia de url-grp; los enlaces viven en `LibraryPage`). LibraryPage creada con diseño de estante de libros (vertical, cuero negro, dorado) usando `computedUrlGrpDetailList()`. ConsoleComponent revertido a original (se revisará después). Pendiente: multipart en el BFF.
+Pendiente principal: multipart en el BFF (subida de imágenes). El resto de la memoria está al día.
 
 ## Último avance comprobado
 
-El frontend migró a sesión en cookies HttpOnly en el BFF (commit `192dcf7`): el BFF consume `access_token` de la API, setea cookies HttpOnly y elimina los tokens del body. `AuthService` usa `ApiAuthTokenResponse { access_token, refresh_token, token_type, expires_in }` y `me()` devuelve `UserProfile`. No hay interceptor de auth. El guard redirige a `/auth` sin sesión y a `/forbidden` si el rol no es admin.
+Guard de `/admin` implementado (`authGuard` + `SessionService`). Admin layout usa `SessionService.getUser()` cacheado. Footer simplificado (sin dependencia de url-grp). LibraryPage creada con estante de libros (vertical, cuero negro, dorado) usando `computedUrlGrpDetailList()`. ConsoleComponent revertido a original. Fuentes globales: Roboto, Cormorant, JetBrains Mono. Rate limiter ajustado (read: 50, write: 10, auth: 5). ALLOWED_HOSTS funciona en Vercel.
 
 ## Archivos tocados (última sesión)
 
-- `src/app/app.routes.ts` (canActivate: [authGuard])
-- `src/app/core/guards/auth-guard.ts`
-- `src/app/core/services/session-service.ts`
-- `src/app/core/services/session-service.spec.ts`
-- `src/app/features/auth/pages/auth-page/auth-page.ts`
-- `src/app/features/home/components/hero-component/hero-component.html`
-- `src/app/shared/constants/routes-constant.ts`
-- `src/app/layouts/admin-layout-component/admin-layout-component.ts`
-- `src/app/layouts/admin-layout-component/admin-layout-component.html`
-- `src/app/features/auth/components/user-details-component/user-details-component.spec.ts`
-- `src/app/app.routes.server.ts`
+- `src/app/features/url-grp/pages/library-page/library-page.html`
+- `src/app/features/url-grp/pages/library-page/library-page.ts`
+- `src/index.html` (fuentes)
+- `src/styles.css` (fuentes + @theme)
+- `src/app/shared/components/footer-component/footer-component.ts` (simplificado)
+- `src/app/shared/components/footer-component/footer-component.html` (simplificado)
+- `src/app/layouts/main-layout-component/main-layout-component.ts` (simplificado)
+- `src/app/layouts/main-layout-component/main-layout-component.html` (simplificado)
+- `src/app/layouts/admin-layout-component/admin-layout-component.ts` (simplificado)
+- `src/app/layouts/admin-layout-component/admin-layout-component.html` (simplificado)
+- `src/app/features/home/components/social-component/social-component.ts` (Twitch/YouTube comentados)
 - `DEVELOPMENT.md`
 - `.baseline/session.md`
 
@@ -39,4 +39,4 @@ El frontend migró a sesión en cookies HttpOnly en el BFF (commit `192dcf7`): e
 
 ## Siguiente paso
 
-Multipart en el BFF (subida de imágenes). El resto de pendientes: TitleComponent input `id`, FooterComponent dependencia invertida, ConsoleComponent setTimeout, navbar href, NG_ALLOWED_HOSTS con dominio real.
+Multipart en el BFF: implementar subida de archivos en el proxy (hoy `image-picker` y `uploadImage` mandan `{}`).
