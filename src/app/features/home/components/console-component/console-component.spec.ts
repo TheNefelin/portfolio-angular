@@ -12,10 +12,19 @@ describe('ConsoleComponent', () => {
 
     fixture = TestBed.createComponent(ConsoleComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should start with empty text', () => {
+    expect((component as unknown as { displayedText: () => string }).displayedText()).toBe('');
+  });
+
+  it('should not throw on destroy', () => {
+    fixture.detectChanges();
+    fixture.destroy();
+    expect(true).toBe(true);
   });
 });

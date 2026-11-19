@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { timer } from 'rxjs';
-import { repeat, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 
 @Component({
   imports: [],
@@ -19,15 +19,13 @@ export class ConsoleComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
-    // Ciclo: espera 1s → escribe char por char (40ms) → pausa 3 min → limpia → repite.
+    // Escribe el texto una sola vez: espera 1s, luego un carácter cada 40ms.
     // takeUntilDestroyed cancela automáticamente al destruir el componente.
     timer(1000, 40).pipe(
       take(this.fullText.length),
       tap((index) => {
-        if (index === 0) this.displayedText.set(''); // limpia al inicio de cada ciclo
         this.displayedText.update((text) => text + this.fullText.charAt(index));
       }),
-      repeat({ delay: 180000 }), // 3 min de pausa antes de reiniciar
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }

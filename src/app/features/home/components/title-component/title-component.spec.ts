@@ -12,16 +12,31 @@ describe('TitleComponent', () => {
 
     fixture = TestBed.createComponent(TitleComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('title', 'Experience');
-    await fixture.whenStable();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render the title', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Experience');
+  it('should render the title', async () => {
+    fixture.componentRef.setInput('title', 'someExperience');
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.textContent).toContain('someExperience');
+  });
+
+  it('should set the id attribute when provided', async () => {
+    fixture.componentRef.setInput('title', 'aboutMe');
+    fixture.componentRef.setInput('id', 'id_me');
+    await fixture.whenStable();
+    const section = fixture.nativeElement.querySelector('section');
+    expect(section?.getAttribute('id')).toBe('id_me');
+  });
+
+  it('should not set id when not provided', async () => {
+    fixture.componentRef.setInput('title', 'aboutMe');
+    await fixture.whenStable();
+    const section = fixture.nativeElement.querySelector('section');
+    expect(section?.getAttribute('id')).toBeNull();
   });
 });
