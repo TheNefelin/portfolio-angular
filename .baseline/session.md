@@ -9,7 +9,7 @@ Multipart verificado: el BFF usa `express.raw()` y reenvía el body como Buffer;
 
 ## Último avance comprobado
 
-Guard de `/admin` implementado. Admin layout usa `SessionService.getUser()` cacheado. Footer simplificado (sin dependencia de url-grp). LibraryPage creada con estante de libros (vertical, cuero negro, dorado). ConsoleComponent revertido a original. Fuentes globales: Roboto, Cormorant, JetBrains Mono. Rate limiter ajustado (read: 50, write: 10, auth: 5). Multipart verificado end-to-end (BFF → API → Cloudinary, 200 + URL).
+Guard de `/admin` implementado. Admin layout usa `SessionService.getUser()` cacheado. Footer simplificado (sin dependencia de url-grp). LibraryPage creada con estante de libros (vertical, cuero negro, dorado). ConsoleComponent reescrito con RxJS (timer + take + repeat + takeUntilDestroyed, ciclo 3 min). Fuentes globales: Roboto, Cormorant, JetBrains Mono. Rate limiter ajustado (read: 50, write: 10, auth: 5). Multipart verificado end-to-end (BFF → API → Cloudinary, 200 + URL).
 
 ## Archivos tocados (última sesión)
 
