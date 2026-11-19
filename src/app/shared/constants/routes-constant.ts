@@ -1,4 +1,4 @@
-import { NavigateModel } from "../models/navigate-model"
+import { NavigateModel } from "@shared/models/navigate-model"
 
 export const ROUTES_CONSTANTS = {
   HOME: '/',
@@ -29,3 +29,8 @@ export const NAVIGATE_MENU_ITEM: NavigateModel[] = [
   { label: 'Technology', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.TECHNOLOGY },
   { label: 'Project', icon: 'settings', navigateTo: ROUTES_CONSTANTS.ADMIN.PROJECT.ROOT },
 ]
+
+export enum Role {
+  Admin = 'admin',
+  User = 'user'
+}

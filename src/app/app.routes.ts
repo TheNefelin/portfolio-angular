@@ -5,6 +5,7 @@ import { AdminLayoutComponent } from "./layouts/admin-layout-component/admin-lay
 import { authGuard } from "@core/guards/auth-guard";
 import { ForbiddenPage } from "./shared/pages/forbidden-page/forbidden-page";
 import { LibraryPage } from "@features/url-grp/pages/library-page/library-page";
+import { Role } from "@shared/constants/routes-constant";
 
 export const routes: Routes = [
 	{
@@ -24,7 +25,7 @@ export const routes: Routes = [
 	{
 		path: "admin",
 		component: AdminLayoutComponent,
-		canActivate: [authGuard("admin")],
+		canActivate: [authGuard(Role.Admin)],
 		children: [
 			{
 				path: "",
@@ -66,6 +67,7 @@ export const routes: Routes = [
 	},
 	{
 		path: "forbidden",
+		canActivate: [authGuard(Role.User)],
 		component: ForbiddenPage,
 	},
 	{

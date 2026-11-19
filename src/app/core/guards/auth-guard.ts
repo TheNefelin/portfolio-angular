@@ -2,10 +2,10 @@ import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { SessionService } from '@core/services/session-service';
-import { ROUTES_CONSTANTS } from '@shared/constants/routes-constant';
+import { Role, ROUTES_CONSTANTS } from '@shared/constants/routes-constant';
 import { map } from 'rxjs';
 
-export type AuthRole = 'admin' | 'user';
+export type AuthRole = Role.Admin | Role.User;
 
 /**
  * Guard de autenticación/autorización para rutas protegidas.
