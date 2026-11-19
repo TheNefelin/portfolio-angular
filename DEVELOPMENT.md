@@ -46,7 +46,7 @@
 
 ## Pendientes
 
-- **Multipart en el BFF:** `image-picker` y `uploadImage` de project, language y technology hoy mandan `{}`.
+- ~~**Multipart en el BFF:** `image-picker` y `uploadImage` mandan `{}`.~~ Resuelto: el BFF usa `express.raw()` y reenvía el body como Buffer; verificado con multipart real (200 + URL de Cloudinary).
 - ~~`FooterComponent` importa un modelo desde `url-grp`: dependencia invertida.~~ Resuelto: el footer ya no recibe `urlGrpDetailList`; los enlaces viven en la `LibraryPage`.
 - `ConsoleComponent` deja `setTimeout` sin limpieza y un `#scrollAnchor` sin uso (revertido; pendiente de revisión).
 

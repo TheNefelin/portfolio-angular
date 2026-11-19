@@ -5,16 +5,16 @@
 
 ## Tarea activa
 
-Pendiente principal: multipart en el BFF (subida de imágenes). El resto de la memoria está al día.
+Multipart verificado: el BFF usa `express.raw()` y reenvía el body como Buffer; subida de imagen devuelve 200 + URL de Cloudinary. Pendiente real: tests de auth (backend), proveedores GitHub/Apple, error 400 en project.
 
 ## Último avance comprobado
 
-Guard de `/admin` implementado (`authGuard` + `SessionService`). Admin layout usa `SessionService.getUser()` cacheado. Footer simplificado (sin dependencia de url-grp). LibraryPage creada con estante de libros (vertical, cuero negro, dorado) usando `computedUrlGrpDetailList()`. ConsoleComponent revertido a original. Fuentes globales: Roboto, Cormorant, JetBrains Mono. Rate limiter ajustado (read: 50, write: 10, auth: 5). ALLOWED_HOSTS funciona en Vercel.
+Guard de `/admin` implementado. Admin layout usa `SessionService.getUser()` cacheado. Footer simplificado (sin dependencia de url-grp). LibraryPage creada con estante de libros (vertical, cuero negro, dorado). ConsoleComponent revertido a original. Fuentes globales: Roboto, Cormorant, JetBrains Mono. Rate limiter ajustado (read: 50, write: 10, auth: 5). Multipart verificado end-to-end (BFF → API → Cloudinary, 200 + URL).
 
 ## Archivos tocados (última sesión)
 
+- `src/server/bff.ts` (debug removido, multipart funciona)
 - `src/app/features/url-grp/pages/library-page/library-page.html`
-- `src/app/features/url-grp/pages/library-page/library-page.ts`
 - `src/index.html` (fuentes)
 - `src/styles.css` (fuentes + @theme)
 - `src/app/shared/components/footer-component/footer-component.ts` (simplificado)
@@ -32,6 +32,7 @@ Guard de `/admin` implementado (`authGuard` + `SessionService`). Admin layout us
 - `pnpm test --watch=false`: 56 archivos, 61/61.
 - `pnpm build`: OK, 1 ruta prerenderizada.
 - `pnpm lint`: limpio.
+- Multipart end-to-end: CREATE → 201, UPLOAD → 200 + URL de Cloudinary.
 
 ## Bloqueos
 
@@ -39,4 +40,4 @@ Guard de `/admin` implementado (`authGuard` + `SessionService`). Admin layout us
 
 ## Siguiente paso
 
-Multipart en el BFF: implementar subida de archivos en el proxy (hoy `image-picker` y `uploadImage` mandan `{}`).
+Tests de auth en `portfolio-python` (aislar el fixture de `drop_all`). Proveedores GitHub/Apple. Error 400 en `POST /api/project`.
