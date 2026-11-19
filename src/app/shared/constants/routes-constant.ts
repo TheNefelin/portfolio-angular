@@ -3,6 +3,7 @@ import { NavigateModel } from "../models/navigate-model"
 export const ROUTES_CONSTANTS = {
   HOME: '/',
   AUTH: '/auth',
+  LIBRARY: '/library',
   FORBIDDEN: '/forbidden',
   ADMIN: {
     DASHBOARD: '/admin',

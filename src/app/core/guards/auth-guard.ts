@@ -5,16 +5,31 @@ import { SessionService } from '@core/services/session-service';
 import { ROUTES_CONSTANTS } from '@shared/constants/routes-constant';
 import { map } from 'rxjs';
 
-export const authGuard: CanActivateFn = () => {
-  // En el servidor no hay cookies del usuario: no se decide nada ahí.
-  if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
-  const router = inject(Router);
-  
-  return inject(SessionService).getUser().pipe(
-    map((user) => {
-      if (!user) return router.createUrlTree([ROUTES_CONSTANTS.AUTH]);
-      if (user.role !== 'admin') return router.createUrlTree([ROUTES_CONSTANTS.FORBIDDEN]);
-      return true;
-    }),
-  );
-};
+export type AuthRole = 'admin' | 'user';
+
+/**
+ * Guard de autenticación/autorización para rutas protegidas.
+ *
+ * @param requiredRole Rol mínimo requerido. Si se omite, basta con estar autenticado.
+ *   - `undefined`: cualquier usuario autenticado pasa.
+ *   - `'admin'`: solo rol admin pasa; el resto va a `/forbidden`.
+ *   - `'user'`: solo rol user pasa.
+ *
+ * Uso: `canActivate: [authGuard()]` o `canActivate: [authGuard('admin')]`.
+ */
+export function authGuard(requiredRole?: AuthRole): CanActivateFn {
+  return () => {
+    // En el servidor no hay cookies del usuario: no se decide nada ahí.
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
+    const router = inject(Router);
+    return inject(SessionService).getUser().pipe(
+      map((user) => {
+        if (!user) return router.createUrlTree([ROUTES_CONSTANTS.AUTH]);
+        if (requiredRole && user.role !== requiredRole) {
+          return router.createUrlTree([ROUTES_CONSTANTS.FORBIDDEN]);
+        }
+        return true;
+      }),
+    );
+  };
+}

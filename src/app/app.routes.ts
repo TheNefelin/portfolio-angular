@@ -4,6 +4,7 @@ import { NotFoundPage } from "./shared/pages/not-found-page/not-found-page";
 import { AdminLayoutComponent } from "./layouts/admin-layout-component/admin-layout-component";
 import { authGuard } from "@core/guards/auth-guard";
 import { ForbiddenPage } from "./shared/pages/forbidden-page/forbidden-page";
+import { LibraryPage } from "@features/url-grp/pages/library-page/library-page";
 
 export const routes: Routes = [
 	{
@@ -23,7 +24,7 @@ export const routes: Routes = [
 	{
 		path: "admin",
 		component: AdminLayoutComponent,
-		canActivate: [authGuard],
+		canActivate: [authGuard("admin")],
 		children: [
 			{
 				path: "",
@@ -58,6 +59,10 @@ export const routes: Routes = [
 	{
 		path: "navaja-suiza/privacy-policy",
 		loadComponent: () => import("@features/privacy-policy/pages/navaja-suiza-page/navaja-suiza-page").then((m) => m.NavajaSuizaPage),
+	},
+	{
+		path: "library",
+		component: LibraryPage,
 	},
 	{
 		path: "forbidden",

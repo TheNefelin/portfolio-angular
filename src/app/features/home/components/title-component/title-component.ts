@@ -7,4 +7,5 @@ import { Component, input } from '@angular/core';
 })
 export class TitleComponent {
   readonly title = input.required<string>();
+  readonly id = input<string>();
 }
