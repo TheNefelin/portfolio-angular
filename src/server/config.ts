@@ -17,4 +17,5 @@ function required(name: string): string {
 export const serverConfig = {
   get apiUrl() { return required('API_URL'); },
   get apiKey() { return required('API_KEY'); },
+  get googleClientId() { return required('GOOGLE_CLIENT_ID'); },
 };

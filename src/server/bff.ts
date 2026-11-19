@@ -3,6 +3,7 @@ import { crudProxy } from '@server/crud/proxy';
 import { authRouter } from '@server/auth/router';
 import { csrfGuard } from '@server/auth/csrf';
 import { authLimiter, readLimiter, writeLimiter } from '@server/middleware/rate-limit';
+import { publicConfigRouter } from '@server/public-config';
 
 /** Router único del BFF. server.ts solo lo monta bajo el prefijo. */
 export const bff = Router();
@@ -24,6 +25,7 @@ bff.use(express.raw({ type: () => true, limit: '5mb' }));
 // 3. CSRF y AUTH, siempre ANTES del CRUD.
 bff.use(csrfGuard);
 bff.use(authRouter);
+bff.use(publicConfigRouter);
 
 // 4. CRUD genérico.
 bff.use(crudProxy);
