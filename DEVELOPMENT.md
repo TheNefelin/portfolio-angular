@@ -26,7 +26,7 @@
 - `ApiService` llama a `/ssr-api/{ruta}` **sin** `/api`: `API_URL` ya termina en `/api` y el BFF concatena. `src/server.ts` agrega `X-API-Key` y reenvía status y JSON.
 - Feedback: `errorInterceptor` → `ErrorService` → `modal-error`; `ConfirmService` (promesa) → `modal-confirm`; `MutationService` → `ToastService` → `toast`. Se montan una vez en `app.html`.
 - CRUD: `url-grp`, `url`, `language` y `technology` usan modal; `project` usa `/admin/project/form` y `/admin/project/form/:id`.
-- Auth: `AuthPage` cablea solo Google; GitHub, Apple y email avisan «Disponible próximamente». `AuthService` (en `core/services/`) usa `ApiService` y devuelve `Observable`; la sesión vive en **cookies HttpOnly** emitidas por el BFF, con CSRF y rate limiting. El Client ID de Google se obtiene del backend (`GET /api/config`) y se cachea en `AuthGoogleService`. `loginGoogle` obtiene el token de Google vía GIS y llama `/ssr-api/auth/google`; el BFF setea la cookie y devuelve el body sin los tokens. `SessionService` (en `core/services/`) cachea el perfil en un signal; `authGuard` (en `core/guards/`) protege `/admin`.
+- Auth: `AuthPage` cablea solo Google; GitHub, Apple y email avisan «Disponible próximamente». `AuthService` (en `core/services/`) usa `ApiService` y devuelve `Observable`; la sesión vive en **cookies HttpOnly** emitidas por el BFF, con CSRF y rate limiting. El Client ID de Google se sirve desde el BFF (`GET /ssr-api/config`, lee `GOOGLE_CLIENT_ID` del `.env` del servidor) y se cachea en `AuthGoogleService` con preload vía `afterNextRender`. `loginGoogle` obtiene el token de Google vía GIS y llama `/ssr-api/auth/google`; el BFF setea la cookie y devuelve el body sin los tokens. `SessionService` (en `core/services/`) cachea el perfil en un signal; `authGuard` (en `core/guards/`) protege `/admin`.
 
 ## Decisiones
 
@@ -41,7 +41,7 @@
 | Aceptado | Feedback con componentes montados una vez en `app.html`. | Sin consumidor, `confirm()` nunca resuelve y el borrado cuelga. |
 | Aceptado | `project` con página de formulario; el resto en modal. | Tiene selects y subida de imagen. |
 | Aceptado | Se mantienen las dos URLs de privacy policy: `/privacy-policy/navaja-suiza` y `/navaja-suiza/privacy-policy`. | Ambas publicadas y con enlaces externos. |
-| Aceptado | Client ID de Google se obtiene del backend vía `GET /api/config`; no se hardcodea en el frontend. | Fuente única de verdad: el `.env` del backend. El front lo cachea en `AuthGoogleService`. |
+| Aceptado | Client ID de Google se sirve desde el BFF (`GET /ssr-api/config`); no se hardcodea en el frontend. | Fuente única de verdad: el `.env` del BFF. El front lo cachea en `AuthGoogleService` con preload. |
 | Aceptado | Sesión en cookies HttpOnly emitidas por el BFF, con CSRF y rate limiting. | Los tokens no llegan al bundle del navegador; el BFF los gestiona. |
 
 ## Pendientes

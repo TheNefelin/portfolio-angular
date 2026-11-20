@@ -1,14 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, UrlTree } from '@angular/router';
 import { authGuard } from './auth-guard';
+import { Role } from '@shared/constants/routes-constant';
 import { SessionService } from '@core/services/session-service';
 import { of } from 'rxjs';
 
 describe('authGuard', () => {
   let sessionSpy: { getUser: ReturnType<typeof vi.fn> };
 
-  const adminUser = { id: '1', email: 'admin@test.com', name: 'Admin', role: 'admin', status: 'activo', is_active: true };
-  const regularUser = { id: '2', email: 'user@test.com', name: 'User', role: 'user', status: 'activo', is_active: true };
+  const adminUser = { id: '1', email: 'admin@test.com', name: 'Admin', role: Role.Admin, status: 'activo', is_active: true };
+  const regularUser = { id: '2', email: 'user@test.com', name: 'User', role: Role.User, status: 'activo', is_active: true };
 
   beforeEach(() => {
     sessionSpy = { getUser: vi.fn() };
@@ -21,7 +22,7 @@ describe('authGuard', () => {
     });
   });
 
-  function runGuard(role?: 'admin' | 'user') {
+  function runGuard(role?: Role.Admin | Role.User) {
     const guard = TestBed.runInInjectionContext(() => authGuard(role));
     return TestBed.runInInjectionContext(() => {
       // CanActivateFn signature: (route, state) => Observable<boolean | UrlTree>
@@ -39,14 +40,14 @@ describe('authGuard', () => {
   it('should allow access for admin role', () => {
     sessionSpy.getUser.mockReturnValue(of(adminUser));
     let resolved: unknown;
-    runGuard('admin').subscribe((v: unknown) => (resolved = v));
+    runGuard(Role.Admin).subscribe((v: unknown) => (resolved = v));
     expect(resolved).toBe(true);
   });
 
   it('should redirect to /forbidden for non-admin role on admin guard', () => {
     sessionSpy.getUser.mockReturnValue(of(regularUser));
     let resolved: unknown;
-    runGuard('admin').subscribe((v: unknown) => (resolved = v));
+    runGuard(Role.Admin).subscribe((v: unknown) => (resolved = v));
     expect((resolved as UrlTree).toString()).toContain('/forbidden');
   });
 
@@ -59,7 +60,7 @@ describe('authGuard', () => {
 
   it('should call getUser() without force', () => {
     sessionSpy.getUser.mockReturnValue(of(adminUser));
-    runGuard('admin').subscribe(() => { /* noop */ });
+    runGuard(Role.Admin).subscribe(() => { /* noop */ });
     expect(sessionSpy.getUser).toHaveBeenCalledWith();
   });
 });
