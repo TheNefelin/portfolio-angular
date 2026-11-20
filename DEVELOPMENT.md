@@ -13,7 +13,7 @@
 | HOME | `src/app/features/home/` | al ajustar secciones del inicio |
 | Admin y CRUD | `src/app/features/{dashboard,url-grp,url,language,technology,project}/` | al tocar listados o formularios |
 | Auth y guard | `src/app/core/services/{auth-service,auth-google-service,session-service}.ts`, `src/app/core/models/auth-profile.ts`, `src/app/core/guards/auth-guard.ts` | al cablear el login o proteger rutas |
-| API y BFF | `src/app/core/services/api-service.ts`, `src/server.ts`, `src/server/bff.ts`, `src/server/auth/*`, `src/server/crud/proxy.ts` | al cambiar rutas, métodos o el proxy |
+| API y BFF | `src/app/core/services/api-service.ts`, `src/server.ts`, `src/server/bff.ts`, `src/server/auth/*`, `src/server/crud/proxy.ts`, `src/server/config/*` | al cambiar rutas, métodos o el proxy |
 | Feedback | `src/app/core/services/{error,toast,confirm,mutation}-service.ts`, `src/app/shared/components/{modal-error,modal-confirm,toast}-component/` | al cambiar mensajes o modales |
 | Listados, UI y navegación | `src/app/shared/base/crud-page.ts`, `src/app/shared/components/`, `src/app/shared/constants/routes-constant.ts` | al cambiar paginación, filtro o navegación |
 | Config | `angular.json`, `tsconfig.json`, `eslint.config.js`, `src/environments/environment.ts`, `.env.example` | al cambiar build, paths, lint o entorno |

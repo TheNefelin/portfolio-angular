@@ -3,7 +3,7 @@ import { crudProxy } from '@server/crud/proxy';
 import { authRouter } from '@server/auth/router';
 import { csrfGuard } from '@server/auth/csrf';
 import { authLimiter, readLimiter, writeLimiter } from '@server/middleware/rate-limit';
-import { publicConfigRouter } from '@server/public-config';
+import { publicConfigRouter } from '@server/auth/public-config';
 
 /** Router único del BFF. server.ts solo lo monta bajo el prefijo. */
 export const bff = Router();

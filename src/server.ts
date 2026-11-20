@@ -10,7 +10,7 @@ import { join } from 'node:path';
 // [BFF] ── Inicio del código propio ─────────────────────────────────────────
 // prepara el entorno, CSP con nonce y monta el proxy (no son del scaffold).
 // `env` va PRIMERO: deja process.env listo antes de que config lo lea.
-import '@server/env';
+import '@server/config/env';
 import { bff } from '@server/bff';
 import { environment } from '@environments/environment';
 // [BFF] ── Fin del código propio ────────────────────────────────────────────
